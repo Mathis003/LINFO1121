@@ -3,7 +3,7 @@ package sorting;
 /**
  * In this task, you must implement the `push` operation on a binary heap data structure.
  * As a reminder, a heap is a tree data structure such that the following invariant is respected
- *  
+ *
  *      For any node in the tree, the value associated with the node is higher (for a maxHeap) or lower
  *      (for a minHeap) than the value of its children.
  *
@@ -14,12 +14,13 @@ package sorting;
  * by the indices. A node at index i has its two children at index 2i and 2i+1.
  * For this is it assumed that the root is located at index 1 in the array.
  */
-public class BinaryHeap {
-
-    private int [] content;
+public class BinaryHeap
+{
+    private int[] content;
     private int size;
 
-    public BinaryHeap(int initialSize) {
+    public BinaryHeap(int initialSize)
+    {
         this.content = new int[initialSize];
         this.size = 0;
     }
@@ -27,8 +28,9 @@ public class BinaryHeap {
     /**
      * Doubles the available size of this binary heap
      */
-    private void increaseSize() {
-        int [] newContent = new int[this.content.length*2];
+    private void increaseSize()
+    {
+        int[] newContent = new int[2 * this.content.length];
         System.arraycopy(this.content, 0, newContent, 0, this.content.length);
         this.content = newContent;
     }
@@ -39,27 +41,45 @@ public class BinaryHeap {
      *
      * @param value the added value
      */
-    public void push(int value) {
+    // BEGIN : STUDENT
+    public void push(int value)
+    {
+        if (this.size + 1 == this.content.length) increaseSize();
+        this.content[this.size + 1] = value;
+        swim();
+        this.size++;
     }
+
+    private void swim()
+    {
+        int k = this.size + 1;
+        while (k >= 1 && this.content[k] < this.content[k / 2])
+        {
+            swap(k , k / 2);
+            k = k / 2;
+        }
+    }
+
+    private void swap(int i, int j)
+    {
+        int tmp = this.content[i];
+        this.content[i] = this.content[j];
+        this.content[j] = tmp;
+    }
+    // END : STUDENT
 
     /**
      * Returns the content of this heap
      */
-    public int[] getContent() {
-        return this.content;
-    }
+    public int[] getContent() { return this.content; }
 
     /**
      * Returns the size of this heap
      */
-    public int size() {
-        return this.size;
-    }
+    public int size() { return this.size; }
 
     /**
      * Returns the root of the tree representing this heap
      */
-    public int getRoot() {
-        return this.content[1];
-    }
+    public int getRoot() { return this.content[1]; }
 }

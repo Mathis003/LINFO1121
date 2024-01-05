@@ -35,24 +35,19 @@ package sorting;
  *  All the code you write in the text field will be substituted in the place indicated below.
  *  You are free to implement other methods to help you in this class, but the method "median" given above must at least be included.
  */
-public class Median {
-
-    public static class Vector {
-
-        private int [] array;
+public class Median
+{
+    public static class Vector
+    {
+        private int[] array;
         private int nOp = 0;
 
-
-        public Vector(int n) {
-            array = new int[n];
-        }
+        public Vector(int n) { array = new int[n]; }
 
         /**
          * Returns the size of the vector
          */
-        public int size() {
-            return array.length;
-        }
+        public int size() { return array.length; }
 
         /**
          * Set the index in the vector to the given value
@@ -60,20 +55,14 @@ public class Median {
          * @param i the index of the vector
          * @param v the value to set
          */
-        public void set(int i, int v) {
-            nOp++;
-            array[i] = v;
-        }
+        public void set(int i, int v) { nOp++; array[i] = v; }
 
         /**
          * Returns the value at the given index
          *
          * @param i The index from which to retrieve the value
          */
-        public int get(int i) {
-            nOp++;
-            return array[i];
-        }
+        public int get(int i) { nOp++; return array[i]; }
 
         /**
          * Exchanges elements in the array
@@ -81,7 +70,8 @@ public class Median {
          * @param i the first index to swap
          * @param j the second index to swap
          */
-        public void swap(int i, int j) {
+        public void swap(int i, int j)
+        {
             nOp++;
             int tmp = array[i];
             array[i] = array[j];
@@ -91,11 +81,8 @@ public class Median {
         /**
          * Returns the number of operation that has been made
          */
-        public int nOp() {
-            return nOp;
-        }
+        public int nOp() { return nOp; }
     }
-
 
     /**
      * Returns the median value of the vector between two indices
@@ -104,9 +91,35 @@ public class Median {
      * @param lo the lowest index from which the median is computed
      * @param hi the highest index from which the median is computed
      */
-    public static int median(Vector vec, int lo, int hi) {
-        // TODO
-         return -1;
+    public static int median(Vector vec, int lo, int hi)
+    {
+        // BEGIN : STUDENT
+        int mid_vec = vec.size() / 2;
+
+        int j = partition(vec, lo, hi);
+
+        if (j == mid_vec)     return vec.get(j);
+        else if (j < mid_vec) return median(vec, j + 1, hi);
+        else                  return median(vec, lo, j - 1);
+        // END : STUDENT
     }
 
+    // BEGIN : STUDENT
+    private static int partition(Vector vec, int lo, int hi)
+    {
+        int pivot = vec.get(lo);
+        int i = lo;
+        int j = hi + 1;
+
+        while (true)
+        {
+            while (vec.get(++i) < pivot) if (i == hi) break;
+            while (vec.get(--j) > pivot) if (j == lo) break;
+            if (i >= j) break;
+            vec.swap(i, j);
+        }
+        vec.swap(lo, j);
+        return j;
+    }
+    // END : STUDENT
 }

@@ -1,7 +1,7 @@
 package sorting;
 
-
-public class CardSorter {
+public class CardSorter
+{
     /**
      * Author: Pierre Schaus
      *
@@ -20,25 +20,40 @@ public class CardSorter {
      *
      * @param list: a list of integers to be sorted.
      */
-    public static void sort(LinkedListImpl list) {
-        // Here is a small loop with an invariant that you should try to respect
-        // although, it's not mandatory, try to respect it, it will help you ;-)
+    /*
+     Here is a small loop with an invariant that you should try to respect.
+     Although, it's not mandatory, try to respect it, it will help you ;-)
 
-        for (int iter = 0; iter < list.getSize() - 1; iter++) {
-            //invariant: the 'iter' biggest elements are at the end of the list and are sorted.
-            //example, at iteration iter=3, the three lasts elements are the three biggest elements in the list, and
-            //they are in the increasing order.
-
-            // TODO
-
+     Invariant: the 'iter' biggest elements are at the end of the list and are sorted.
+     Example : At iteration iter = 3, the three lasts elements are the three biggest elements in the list,
+               and they are in the increasing order.
+     */
+    // BEGIN : STUDENT
+    public static void sort(LinkedListImpl list)
+    {
+        for (int iter = 0; iter < list.getSize() - 1; iter++)
+        {
+            for (int i = 0; i < list.getSize() - iter - 1; i++)
+            {
+                if (list.getFirst() > list.getSecond()) list.swap();
+                list.pop();
+            }
+            for (int i = 0; i <= iter; i++) list.pop();
         }
-        // here, if you followed the invariant proposed above, the list should be sorted!
+    }
+    // END : STUDENT
+
+    public static void main(String[] args)
+    {
+        int[] array = {1, 7, 0, -8, 99, 21, 2};
+        LinkedListImpl linkedlist = new LinkedListImpl(array);
+        sort(linkedlist);
     }
 
 }
 
-class LinkedListImpl {
-
+class LinkedListImpl
+{
     private Node first;
     private Node second;
     private Node tail;
@@ -46,23 +61,20 @@ class LinkedListImpl {
     private int nSwaps;
     private int nPops;
 
-    private static class Node {
-
+    private static class Node
+    {
         private int value;
         private Node next;
 
-        private Node(int v, Node n) {
+        private Node(int v, Node n)
+        {
             this.value = v;
             this.next = n;
         }
 
-        private int getValue() {
-            return value;
-        }
+        private int getValue() { return value; }
 
-        private void setNext(Node next) {
-            this.next = next;
-        }
+        private void setNext(Node next) { this.next = next; }
     }
 
     /**
@@ -70,32 +82,27 @@ class LinkedListImpl {
      *
      * @param array
      */
-    LinkedListImpl(int[] array) {
-        nPops = 0;
-        nSwaps = 0;
-        len = 0;
-        for (int elem : array)
-            add(elem);
+    LinkedListImpl(int[] array)
+    {
+        nPops = 0; nSwaps = 0; len = 0;
+        for (int elem : array) add(elem);
     }
 
     /**
      * @return the first element of the list
      */
-    public int getFirst() {
-        return first.value;
-    }
+    public int getFirst() { return first.value; }
 
     /**
      * @return the second element of the list
      */
-    public int getSecond() {
-        return second.value;
-    }
+    public int getSecond() { return second.value; }
 
     /**
      * Swap the first and second element of the list
      */
-    public void swap() {
+    public void swap()
+    {
         Node oldFirst = this.first;
         Node third = this.second.next;
         this.first = this.second;
@@ -108,7 +115,8 @@ class LinkedListImpl {
     /**
      * Take the first element and put it at the end of the list
      */
-    public void pop() {
+    public void pop()
+    {
         Node oldFirst = this.first;
         this.first = this.second;
         this.second = this.first.next;
@@ -124,17 +132,23 @@ class LinkedListImpl {
      *
      * @param v element to add
      */
-    private void add(int v) {
-        if (len == 0) {
+    private void add(int v)
+    {
+        if (len == 0)
+        {
             this.first = new Node(v, null);
             this.len++;
             this.tail = this.first;
-        } else if (len == 1) {
+        }
+        else if (len == 1)
+        {
             this.second = new Node(v, null);
             this.first.setNext(this.second);
             this.len++;
             this.tail = this.second;
-        } else {
+        }
+        else
+        {
             Node n = new Node(v, null);
             this.tail.next = n;
             this.tail = n;
@@ -145,37 +159,34 @@ class LinkedListImpl {
     /**
      * @return True if the full list is sorted, False otherwise
      */
-    boolean isSorted() {
+    boolean isSorted()
+    {
         Node current = this.first;
         if (current == null) return true;
-        for (int i = 0; i < getSize() - 1 && current.next != null; i++) {
+        for (int i = 0; i < getSize() - 1 && current.next != null; i++)
+        {
             if (current.getValue() > current.next.getValue()) return false;
             current = current.next;
         }
         return true;
     }
 
-    public int getSize() {
-        return len;
-    }
+    public int getSize() { return len; }
 
-    public String toString() {
+    public String toString()
+    {
         String s = "[";
         Node current = this.first;
-        while (current != null) {
+        while (current != null)
+        {
             s += current.value + " ";
             current = current.next;
         }
-
         s += " ]";
         return s;
     }
 
-    public int getnSwaps() {
-        return nSwaps;
-    }
+    public int getnSwaps() { return nSwaps; }
 
-    public int getnPops() {
-        return nPops;
-    }
+    public int getnPops() { return nPops; }
 }

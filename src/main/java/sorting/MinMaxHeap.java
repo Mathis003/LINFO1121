@@ -27,20 +27,22 @@ import static java.lang.Math.log;
  *
  * To help you for the swim function, a `getNodeDepth` function is provided which returns the depth of a node.
  */
-public class MinMaxHeap<Key extends Comparable<Key>> {
-
+public class MinMaxHeap<Key extends Comparable<Key>>
+{
     private Key[] content;
     private int size;
 
     @SuppressWarnings("unchecked")
-    public MinMaxHeap(int initialSize) {
+    public MinMaxHeap(int initialSize)
+    {
         this.content = (Key []) new Comparable[initialSize];
         this.size = 0;
     }
 
     @SuppressWarnings("unchecked")
-    private void increaseSize() {
-        Key [] newContent = (Key []) new Comparable[this.content.length*2];
+    private void increaseSize()
+    {
+        Key [] newContent = (Key []) new Comparable[2 * this.content.length];
         System.arraycopy(this.content, 0, newContent, 0, this.content.length);
         this.content = newContent;
     }
@@ -56,17 +58,24 @@ public class MinMaxHeap<Key extends Comparable<Key>> {
      * Returns the minimum of the heap.
      * Expected time complexity: O(1)
      */
-    public Key min() {
-         return null;
+    // BEGIN : STUDENT
+    public Key min()
+    {
+        if (this.size == 0) return null;
+        return this.content[1];
     }
 
     /**
      * Returns the maximum of the heap.
      * Expected time complexity: O(1)
      */
-    public Key max() {
-         return null;
+    public Key max()
+    {
+        if (this.size <= 1) return min();
+        if (this.size == 2) return this.content[2];
+        return (higherThan(this.content[3], this.content[2])) ? this.content[3] : this.content[2];
     }
+    // END : STUDENT
 
     /**
      * Swaps the elements at index i and j in the
@@ -75,7 +84,8 @@ public class MinMaxHeap<Key extends Comparable<Key>> {
      * @param i the first index to swap
      * @param j the second index to swap
      */
-    private void swap(int i, int j) {
+    private void swap(int i, int j)
+    {
         Key tmp = this.content[i];
         this.content[i] = this.content[j];
         this.content[j] = tmp;
@@ -87,9 +97,7 @@ public class MinMaxHeap<Key extends Comparable<Key>> {
      * @param key The base key for comparison
      * @param comparedTo The key compared to
      */
-    private boolean lessThan(Key key, Key comparedTo) {
-        return key.compareTo(comparedTo) < 0;
-    }
+    private boolean lessThan(Key key, Key comparedTo) { return key.compareTo(comparedTo) < 0; }
 
     /**
      * Returns true if the first key is greater than the second key
@@ -97,17 +105,16 @@ public class MinMaxHeap<Key extends Comparable<Key>> {
      * @param key The base key for comparison
      * @param comparedTo The key compared to
      */
-    private boolean higherThan(Key key, Key comparedTo) {
-        return key.compareTo(comparedTo) > 0;
-    }
+    private boolean higherThan(Key key, Key comparedTo) { return key.compareTo(comparedTo) > 0; }
 
     /**
      * Returns the depth of the node at a given position
      *
      * @param position The index in the `content` array for which the depth must be computed
      */
-    private int getNodeDepth(int position) {
-        // There is no log2 function in java.lang.Math so we use this little 
+    private int getNodeDepth(int position)
+    {
+        // There is no log2 function in java.lang.Math so we use this little
         // formula to compute the log2 of K (which give, when rounded to its
         // integer value, the depth of the index)
         return (int) (log(position) / log(2));
@@ -118,19 +125,37 @@ public class MinMaxHeap<Key extends Comparable<Key>> {
      *
      * @param position The position of the node to swim in the `content` array
      */
-    public void swim(int position) {
+    // BEGIN : STUDENT
+    public void swim(int position)
+    {
+        while (position > 1)
+        {
+            int parentPos = position / 2;
+            boolean isMinHeap = (getNodeDepth(parentPos) % 2 == 0);
+            if (isMinHeap)
+            {
+                if (higherThan(this.content[parentPos], this.content[position]))                        swap(position, parentPos);
+                else if (position > 3 && lessThan(this.content[position], this.content[parentPos / 2])) swap(position, parentPos / 2);
+            }
+            else
+            {
+                if (lessThan(this.content[parentPos], this.content[position]))                            swap(position, parentPos);
+                else if (position > 3 && higherThan(this.content[parentPos / 2], this.content[position])) swap(position, parentPos / 2);
+            }
+            position = parentPos;
+        }
     }
+    // END : STUDENT
 
     /**
      * Inserts a new value in the heap
      *
      * @param k the value to insert
      */
-    public void insert(Key k) {
+    public void insert(Key k)
+    {
         this.size += 1;
-        if (this.size >= this.content.length) {
-            this.increaseSize();
-        }
+        if (this.size >= this.content.length) this.increaseSize();
         this.content[this.size] = k;
         this.swim(this.size);
     }

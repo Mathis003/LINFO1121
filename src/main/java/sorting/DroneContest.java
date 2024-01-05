@@ -1,5 +1,11 @@
+/*
+This is not my code !
+I did not succeed this exercice :/
+*/
+
 package sorting;
 import java.util.*;
+
 /**
  * Context
  * --------
@@ -64,8 +70,8 @@ import java.util.*;
  *  Therefore, there is a drone flying at altitude a.height between these two times.
  *
  */
-public class DroneContest {
-
+public class DroneContest
+{
     /**
      * Given an array of participants (that starts their drones at a time given by drone.start (inclusive),
      * stops it at drone.end (exclusive) and goes at height drone.height),
@@ -82,34 +88,117 @@ public class DroneContest {
      * and B.time (exclusive) is EXACTLY A.height (i.e. there exists a drone with this height active between these
      * times). Moreover, A.height != B.height.
      */
-    public static LinkedList<HeightChange> findHighest(Drone[] participants) {
-        // TODO
-         return null;
+    public static LinkedList<HeightChange> findHighest(Drone[] participants)
+    {
+        // BEGIN : STUDENT
+        ArrayList<HeightChange> merged = split(participants, 0, participants.length - 1);
+
+        LinkedList<HeightChange> output = new LinkedList<>();
+        output.add(new HeightChange(0, 0));
+        for (HeightChange heightChange : merged)
+        {
+            if (output.getLast().height != heightChange.height) output.add(heightChange);
+        }
+        return output;
+        // END : STUDENT
     }
 
+    // BEGIN : STUDENT
+    public static ArrayList<HeightChange> split(Drone[] array, int lo, int hi)
+    {
+        if (hi == lo)
+        {
+            ArrayList<HeightChange> heightChanges = new ArrayList<>(); // CHECK REDUNDANCY
+            heightChanges.add(new HeightChange(array[lo].start, array[lo].height));
+            heightChanges.add(new HeightChange(array[lo].end, 0));
+            return heightChanges;
+        }
 
+        int mid = (lo + hi) / 2;
 
+        ArrayList<HeightChange> left = split(array, lo, mid);
+        ArrayList<HeightChange> right = split(array, mid + 1, hi);
+
+        return mergeSort(left, right);
+    }
+
+    public static ArrayList<HeightChange> mergeSort(ArrayList<HeightChange> left, ArrayList<HeightChange> right)
+    {
+        ArrayList<HeightChange> merged = new ArrayList<>(left.size() + right.size());
+        int h1 = 0;
+        int h2 = 0;
+        int i = 0;
+        int j = 0;
+
+        while (i < left.size() && j < right.size())
+        {
+            if (left.get(i).time < right.get(j).time)
+            {
+                int x1 = left.get(i).time;
+                h1 = left.get(i).height;
+                int maxH = Math.max(h1, h2);
+                add(merged, new HeightChange(x1, maxH));
+                i++;
+            }
+            else if (left.get(i).time > right.get(j).time)
+            {
+                int x2 = right.get(j).time;
+                h2 = right.get(j).height;
+                int maxH = Math.max(h1, h2);
+                add(merged, new HeightChange(x2, maxH));
+                j++;
+            }
+            else
+            {
+                int x2 = right.get(j).time;
+                h1 = left.get(i).height;
+                h2 = right.get(j).height;
+                int maxH = Math.max(h1, h2);
+                add(merged, new HeightChange(x2, maxH));
+                i++; j++;
+            }
+        }
+
+        while (i < left.size()) { add(merged, left.get(i)); i++; }
+        while (j < right.size()) { add(merged, right.get(j)); j++; }
+
+        return merged;
+    }
+
+    public static boolean add(ArrayList<HeightChange> array, HeightChange heightChange)
+    {
+        if (array.size() > 0 && array.get(array.size() - 1).height == heightChange.height) return false;
+        if (array.size() > 0 && array.get(array.size() - 1).time == heightChange.time)
+        {
+            array.get(array.size() - 1).height = Math.max(array.get(array.size() - 1).height, heightChange.height);
+            return true;
+        }
+        array.add(heightChange);
+        return true;
+    }
+    // END : STUDENT
 }
 
-class HeightChange {
+class HeightChange
+{
     public int time;
     public int height;
 
-    public HeightChange(int t, int h) {
+    public HeightChange(int t, int h)
+    {
         time = t; height = h;
     }
-    public String toString() {
-        return "Time: " + time + ", Height: " + height;
-    }
+    public String toString() { return "Time: " + time + ", Height: " + height; }
 }
 
-class Drone {
+class Drone
+{
     public final int start;
     public final int end;
     public final int height;
 
-    public Drone(int s, int e, int h) {
+    public Drone(int s, int e, int h)
+    {
         start = s; end = e; height = h;
     }
-
 }

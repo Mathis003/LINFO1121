@@ -33,17 +33,14 @@ import java.util.Arrays;
  * Feel free to use any method or data structure available in the Java language and API.
  */
 
-abstract class GlobalWarming {
-
-
+abstract class GlobalWarming
+{
     protected final int[][] altitude;
 
     /**
      * @param altitude is a n x n matrix of int values representing altitudes (positive or negative)
      */
-    public GlobalWarming(int[][] altitude) {
-        this.altitude = altitude;
-    }
+    public GlobalWarming(int[][] altitude) { this.altitude = altitude; }
 
     /**
      *
@@ -53,18 +50,27 @@ abstract class GlobalWarming {
      *         Warning: this is not the waterLevel given in the constructor/
      */
     public abstract int nbSafePoints(int waterLevel);
-
 }
 
 
-public class GlobalWarmingImpl extends GlobalWarming {
+public class GlobalWarmingImpl extends GlobalWarming
+{
+    // BEGIN : STUDENT
+    int[] flattenArray;
+    // END : STUDENT
 
-
-    public GlobalWarmingImpl(int[][] altitude) {
+    // Expected pre-processing time in the constructor : O(n^2 log(n^2))
+    public GlobalWarmingImpl(int[][] altitude)
+    {
         super(altitude);
-        // TODO
-        // expected pre-processing time in the constructror : O(n^2 log(n^2))
-
+        // BEGIN : STUDENT
+        flattenArray = new int[altitude.length * altitude.length];
+        for (int i = 0; i < altitude.length; i++)
+        {
+            for (int j = 0; j < altitude.length; j++) flattenArray[i * altitude.length + j] = altitude[i][j];
+        }
+        Arrays.sort(flattenArray);
+        // END : STUDENT
     }
 
     /**
@@ -72,12 +78,28 @@ public class GlobalWarmingImpl extends GlobalWarming {
      *
      * @param waterLevel the level of water
      */
-    public int nbSafePoints(int waterLevel) {
-        // TODO
-        // expected time complexity O(log(n^2))
-         return -1;
+    // Expected time complexity : O(log(n^2))
+    // BEGIN : STUDENT
+    public int nbSafePoints(int waterLevel) { return flattenArray.length - binarySearch(waterLevel); }
+
+    private int binarySearch(int waterLevel)
+    {
+        int lo = 0;
+        int hi = flattenArray.length - 1;
+
+        if (waterLevel < flattenArray[lo])  return flattenArray.length - (hi + 1);
+        if (waterLevel >= flattenArray[hi]) return flattenArray.length - lo;
+
+        while (true)
+        {
+            int mid = (lo + hi) / 2;
+            if (flattenArray[mid] <= waterLevel) lo = mid + 1;
+            else
+            {
+                if (mid == 0 || flattenArray[mid - 1] <= waterLevel) return mid;
+                hi = mid - 1;
+            }
+        }
     }
-
-
-
+    // END : STUDENT
 }
