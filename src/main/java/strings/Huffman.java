@@ -1,7 +1,6 @@
 package strings;
 
-
-
+import java.util.PriorityQueue;
 
 /**
  * This class is used to construct a Huffman trie from frequencies of letters (in unicode or ASCII).
@@ -25,65 +24,62 @@ package strings;
  * In practice you are given an array of frequencies for each of the 256 ASCII code or 65536 unicode characters.
  * The goal is to construct the Huffman trie from this array of frequencies.
  */
-public class Huffman {
-
+public class Huffman
+{
     /**
      * Constructs a Huffman trie for the frequencies of the characters given in arguments.
      * The characters are implicitely defined by the `freq` array (ranging from 0 to freq.length -1)
      *
      * @param freq the frequencies of the characters, freq[i] = frequency of character i
      */
-    public static HuffmanNode buildTrie(int [] freq) {
-         return null;
+    public static HuffmanNode buildTrie(int[] freq)
+    {
+        // BEGIN : STUDENT
+        PriorityQueue<HuffmanNode> pq = new PriorityQueue<>();
+        for (int i = 0; i < freq.length; i++) pq.add(new HuffmanNode(i, freq[i], null, null));
+
+        while (pq.size() != 1)
+        {
+            HuffmanNode left = pq.poll();
+            HuffmanNode right = pq.poll();
+            pq.add(new HuffmanNode(-1, left.getFrequency() + right.getFrequency(), left, right));
+        }
+        return pq.poll();
+        // END : STUDENT
     }
 }
 
-class HuffmanNode implements Comparable<HuffmanNode> {
-
+class HuffmanNode implements Comparable<HuffmanNode>
+{
     private final int ch;
     private final int freq;
     private HuffmanNode left;
     private HuffmanNode right;
 
-    public HuffmanNode(int ch, int freq, HuffmanNode left, HuffmanNode right) {
+    public HuffmanNode(int ch, int freq, HuffmanNode left, HuffmanNode right)
+    {
         this.ch = ch;
         this.freq = freq;
         this.left = left;
         this.right = right;
     }
 
-    public HuffmanNode getLeft() {
-        return this.left;
-    }
+    public HuffmanNode getLeft() { return this.left; }
 
     @SuppressWarnings("unchecked")
-    public void setLeft(HuffmanNode node) {
-        this.left = node;
-    }
+    public void setLeft(HuffmanNode node) { this.left = node; }
 
-    public HuffmanNode getRight() {
-        return this.right;
-    }
+    public HuffmanNode getRight() { return this.right; }
 
     @SuppressWarnings("unchecked")
-    public void setRight(HuffmanNode node) {
-        this.right = node;
-    }
+    public void setRight(HuffmanNode node) { this.right = node; }
 
     @Override
-    public int compareTo(HuffmanNode node) {
-        return this.freq - node.freq;
-    }
+    public int compareTo(HuffmanNode node) { return this.freq - node.freq; }
 
-    public int getFrequency() {
-        return this.freq;
-    }
+    public int getFrequency() { return this.freq; }
 
-    public int getChar() {
-        return this.ch;
-    }
+    public int getChar() { return this.ch; }
 
-    public boolean isLeaf() {
-        return this.left == null && this.right == null;
-    }
+    public boolean isLeaf() { return this.left == null && this.right == null; }
 }
