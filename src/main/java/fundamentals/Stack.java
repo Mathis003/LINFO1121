@@ -9,10 +9,11 @@ import java.util.EmptyStackException;
  * - a simple linkedList as internal structure
  * - a growing array as internal structure
  */
-public interface Stack<E> {
-
+public interface Stack<E>
+{
     /**
-     * Returns True if the stack is empty False otherwise
+     * Looks at the object at the top of this stack
+     * without removing it from the stack
      */
     public boolean empty();
 
@@ -36,7 +37,6 @@ public interface Stack<E> {
      * @param item the item to add
      */
     public void push(E item);
-
 }
 
 /**
@@ -45,44 +45,62 @@ public interface Stack<E> {
  * You are not allowed to use classes from java.util
  * @param <E>
  */
-class LinkedStack<E> implements Stack<E> {
-
-    private Node<E> top;        // the node on the top of the stack
-    private int size;        // size of the stack
+class LinkedStack<E> implements Stack<E>
+{
+    private Node<E> top;  // the node on the top of the stack
+    private int size;     // size of the stack
 
     // helper linked list class
-    private class Node<E> {
+    private class Node<E>
+    {
         private E item;
         private Node<E> next;
 
-        public Node(E element, Node<E> next) {
+        public Node(E element, Node<E> next)
+        {
             this.item = element;
             this.next = next;
         }
     }
 
-    @Override
-    public boolean empty() {
-        // TODO Implement empty method
-         return false;
+    // BEGIN : STUDENT
+    public LinkedStack()
+    {
+        top = new Node<E>(null, null);
+        size = 0;
     }
 
     @Override
-    public E peek() throws EmptyStackException {
-        // TODO Implement peek method
-         return null;
+    public boolean empty() { return size == 0; }
+
+    @Override
+    public E peek() throws EmptyStackException
+    {
+        if (empty()) throw new EmptyStackException();
+        return top.item;
     }
 
     @Override
-    public E pop() throws EmptyStackException {
-        // TODO Implement pop method
-         return null;
+    public E pop() throws EmptyStackException
+    {
+        if (empty()) throw new EmptyStackException();
+        Node oldTop = top;
+        E item = (E) oldTop.item;
+        top = oldTop.next;
+        oldTop.next = null;
+        oldTop = null;
+        size--;
+        return item;
     }
 
     @Override
-    public void push(E item) {
-        // TODO Implement push method
+    public void push(E item)
+    {
+        Node oldTop = top;
+        top = new Node<E>(item, oldTop);
+        size++;
     }
+    // END : STUDENT
 }
 
 
@@ -93,36 +111,51 @@ class LinkedStack<E> implements Stack<E> {
  * You are not allowed to use classes from java.util
  * @param <E>
  */
-class ArrayStack<E> implements Stack<E> {
+class ArrayStack<E> implements Stack<E>
+{
+    private E[] array;  // array storing the elements on the stack
+    private int size;   // size of the stack
 
-    private E[] array;        // array storing the elements on the stack
-    private int size;        // size of the stack
-
-    public ArrayStack() {
+    // BEGIN : STUDENT
+    public ArrayStack()
+    {
         array = (E[]) new Object[10];
+        size = 0;
     }
 
     @Override
-    public boolean empty() {
-        // TODO Implement empty method
-         return false;
+    public boolean empty() { return size == 0; }
+
+    @Override
+    public E peek() throws EmptyStackException
+    {
+        if (empty()) throw new EmptyStackException();
+        return array[size - 1];
     }
 
     @Override
-    public E peek() throws EmptyStackException {
-        // TODO Implement peek method
-         return null;
+    public E pop() throws EmptyStackException
+    {
+        if (empty()) throw new EmptyStackException();
+        E last_item = array[size - 1];
+        array[size - 1] = null;
+        size--;
+        return last_item;
     }
 
     @Override
-    public E pop() throws EmptyStackException {
-        // TODO Implement pop method
-         return null;
+    public void push(E item)
+    {
+        size++;
+        if (size == array.length) resize(2 * array.length);
+        array[size - 1] = item;
     }
 
-    @Override
-    public void push(E item) {
-        // TODO Implement push method
+    private void resize(int capacity)
+    {
+        E[] oldArray = array;
+        array = (E[]) new Object[capacity];
+        for (int i = 0; i < oldArray.length; i++) array[i] = oldArray[i];
     }
+    // END : STUDENT
 }
-

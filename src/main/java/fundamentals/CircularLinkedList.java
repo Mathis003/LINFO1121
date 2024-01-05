@@ -25,45 +25,49 @@ import java.util.NoSuchElementException;
  *
  * @param <Item>
  */
-public class CircularLinkedList<Item> implements Iterable<Item> {
-
-    private long nOp = 0; // count the number of operations
-    private int n;          // size of the stack
-    private Node  last;   // trailer of the list
+public class CircularLinkedList<Item> implements Iterable<Item>
+{
+    private long nOp = 0;  // count the number of operations
+    private int n;         // size of the stack
+    private Node last;     // trailer of the list
 
     // helper linked list class
-    private class Node {
+    private class Node
+    {
         private Item item;
         private Node next;
     }
 
-    public CircularLinkedList() {
-        // TODO initialize instance variables
+    // BEGIN : STUDENT
+    public CircularLinkedList()
+    {
+        n = 0;
+        last = new Node();
+        last.next = last;
     }
 
-    public boolean isEmpty() {
-        // TODO
-         return false;
-    }
+    public boolean isEmpty() { return n == 0; }
 
-    public int size() {
-        // TODO
-         return -1;
-    }
+    public int size() { return n; }
 
-    private long nOp() {
-        return nOp;
-    }
-
-
+    private long nOp() { return nOp; }
 
     /**
      * Append an item at the end of the list
      * @param item the item to append
      */
-    public void enqueue(Item item) {
-        // TODO
-
+    public void enqueue(Item item)
+    {
+        Node oldLast = last;
+        last = new Node();
+        last.item = item;
+        if (isEmpty()) last.next = last;
+        else
+        {
+            last.next = oldLast.next;
+            oldLast.next = last;
+        }
+        nOp++; n++;
     }
 
     /**
@@ -71,8 +75,35 @@ public class CircularLinkedList<Item> implements Iterable<Item> {
      * Shifts any subsequent elements to the left (subtracts one from their indices).
      * Returns the element that was removed from the list.
      */
-    public Item remove(int index) {
-         return null;
+    public Item remove(int index)
+    {
+        nOp++;
+        if (index < 0 || index >= size()) throw new ArrayIndexOutOfBoundsException();
+        if (isEmpty())                    return null;
+
+        Node toRemove;
+        Item itemToRemove;
+
+        if (index == 0)
+        {
+            toRemove = last.next;
+            itemToRemove = toRemove.item;
+            if (size() == 1) { last.next = null; last = null; }
+            else               last.next = last.next.next;
+        }
+        else
+        {
+            Node previous = last;
+            for (int i = 0; i < index; i++) previous = previous.next;
+            toRemove = previous.next;
+            itemToRemove = toRemove.item;
+            previous.next = toRemove.next;
+            if (index == size() - 1) last = previous;
+        }
+        toRemove.next = null;
+        toRemove = null;
+        n--;
+        return itemToRemove;
     }
 
 
@@ -80,9 +111,7 @@ public class CircularLinkedList<Item> implements Iterable<Item> {
      * Returns an iterator that iterates through the items in FIFO order.
      * @return an iterator that iterates through the items in FIFO order.
      */
-    public Iterator<Item> iterator() {
-        return new ListIterator();
-    }
+    public Iterator<Item> iterator() { return new ListIterator(); }
 
     /**
      * Implementation of an iterator that iterates through the items in FIFO order.
@@ -93,21 +122,33 @@ public class CircularLinkedList<Item> implements Iterable<Item> {
      * Whenever it gets the next value (i.e. using next() method), and if it finds that the
      * nOp has been modified after this iterator has been created, it throws ConcurrentModificationException.
      */
-    private class ListIterator implements Iterator<Item> {
+    private class ListIterator implements Iterator<Item>
+    {
+        long nOpFixed;
+        Node current;
+        int incr;
 
-        // TODO You probably need a constructor here and some instance variables
-
-
-        @Override
-        public boolean hasNext() {
-             return false;
+        public ListIterator()
+        {
+            incr = 0;
+            nOpFixed = nOp;
+            if (n <= 1) current = last;
+            else        current = last.next;
         }
 
         @Override
-        public Item next() {
-             return null;
-        }
+        public boolean hasNext() { return incr < size(); }
 
+        @Override
+        public Item next()
+        {
+            if (!hasNext())      throw new NoSuchElementException();
+            if (nOpFixed != nOp) throw new ConcurrentModificationException();
+            Item item = current.item;
+            current = current.next;
+            incr++;
+            return item;
+        }
     }
-
+    // END : STUDENT
 }
