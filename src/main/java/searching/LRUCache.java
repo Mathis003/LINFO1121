@@ -1,5 +1,7 @@
 package searching;
 
+import java.util.HashMap;
+
 /**
  * We are interested in the implementation of an LRU cache,
  * i.e. a (hash)-map of limited capacity where the addition of
@@ -53,20 +55,117 @@ package searching;
  *
  *  Feel free to use existing java classes from Java
  */
-public class LRUCache<K,V> {
-
+public class LRUCache<K, V>
+{
     private int capacity;
+    HashMap<K, Node<K, V>> map;
+    Node<K, V> first;
+    Node<K, V> last;
 
-
-    public LRUCache(int capacity) {
+    public LRUCache(int capacity)
+    {
         this.capacity = capacity;
+        this.map = new HashMap<>();
+        this.first = null;
+        this.last = null;
     }
 
-    public V get(K key) {
-         return null;
+    // BEGIN : STUDENT
+    public V get(K key)
+    {
+        Node<K, V> node = map.getOrDefault(key, null);
+        if (node == null) return null;
+
+        remove(node);
+        addFront(node);
+
+        return node.value;
+    }
+    // END : STUDENT
+
+    // BEGIN : STUDENT
+    public void put(K key, V value)
+    {
+        Node<K, V> node = map.getOrDefault(key, null);
+
+        if (node != null)
+        {
+            node.value = value;
+
+            remove(node);
+            addFront(node);
+        }
+        else
+        {
+            Node n = new Node(key, value);
+
+            addFront(n);
+            map.put(key, n);
+
+            if (map.size() > capacity)
+            {
+                map.remove(this.last.key);
+                remove(this.last);
+            }
+        }
+    }
+    // END : STUDENT
+
+    // BEGIN : STUDENT
+    private void remove(Node node)
+    {
+        if (node.prev != null) node.prev.next = node.next;
+        else this.first = node.next;
+
+        if (node.next != null) node.next.prev = node.prev;
+        else this.last = node.prev;
     }
 
-    public void put(K key, V value) {
-    }
+    private void addFront(Node node)
+    {
+        node.next = this.first;
+        node.prev = null;
 
+        if (this.first != null) this.first.prev = node;
+
+        this.first = node;
+
+        if (this.last == null) this.last = this.first;
+    }
+    // END : STUDENT
+
+    // BEGIN : STUDENT
+    // To Debug Only
+    private void printLinkedList()
+    {
+        Node<K, V> curr = this.first;
+        while (curr != null)
+        {
+            System.out.println("key : " + curr.key + "    value : " + curr.value);
+            curr = curr.next;
+        }
+    }
+    // END : STUDENT
+
+    // BEGIN : STUDENT
+    private static class Node<K, V>
+    {
+        K key;
+        V value;
+        Node<K, V> next;
+        Node<K, V> prev;
+
+        private Node(K key, V value)
+        {
+            this.key = key;
+            this.value = value;
+            this.next = null;
+            this.prev = null;
+        }
+
+        private K getKey() { return this.key; }
+
+        private V getValue() { return this.value; }
+    }
+    // END : STUDENT
 }

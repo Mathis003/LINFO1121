@@ -1,7 +1,12 @@
+/*
+My solution is more complex than expected.
+Check first the solution's teacher.
+That was the Mid-Term exercise (difficult).
+ */
+
 package searching;
 
 import java.util.ArrayList;
-
 
 /**
  *  We study a BST representation using an arrayList internal representation.
@@ -44,27 +49,27 @@ import java.util.ArrayList;
  *  HINT 💡: Consider reusing key locations of previously deleted keys without
  *           trying to reorganize the BST.
  */
-public class ArrayBSTDelete<Key extends Comparable<Key>, Value> {
-
+public class ArrayBSTDelete<Key extends Comparable<Key>, Value>
+{
     // The next four array lists should always have exactly equal sizes
-
     public ArrayList<Key> keys;
     public ArrayList<Value> values;
 
-    public ArrayList<Integer> idxLeftNode; // idxLeftNode[i] = index of left node of i
+    public ArrayList<Integer> idxLeftNode;  // idxLeftNode[i] = index of left node of i
     public ArrayList<Integer> idxRightNode; // idxRightNode[i] = index of right node of i
-
 
     final int NONE = -1;
 
-    public ArrayBSTDelete() {
+    public ArrayBSTDelete()
+    {
         keys = new ArrayList<>();
         values = new ArrayList<>();
         idxLeftNode = new ArrayList<>();
         idxRightNode = new ArrayList<>();
     }
 
-    private void addNode(Key key, Value val) {
+    private void addNode(Key key, Value val)
+    {
         keys.add(key);
         values.add(val);
         idxLeftNode.add(NONE);
@@ -78,27 +83,24 @@ public class ArrayBSTDelete<Key extends Comparable<Key>, Value> {
      * @param val the value that must be attached to this key
      * @return true if the key was added, false if already present and the value has simply been erased
      */
-    public boolean put(Key key, Value val) {
-        if (!values.isEmpty()) {
-            int i = 0; // start at the root
-            // the new node will be created at index values.size
+    public boolean put(Key key, Value val)
+    {
+        if (!values.isEmpty())
+        {
+            int i = 0;
             ArrayList<Integer> idxChild;
             do {
                 int cmp = key.compareTo(keys.get(i));
-                if (cmp == 0) {
-                    // key already present in this node, just replace its value
-                    values.set(i,val);
-                    return false;
-                } else {
-                    // key different, follow the left or right link
+                if (cmp == 0) { values.set(i,val); return false; }
+                else
+                {
                     idxChild = cmp < 0 ? idxLeftNode : idxRightNode;
                     int next = idxChild.get(i);
-                    if (next == NONE) idxChild.set(i,keys.size());  // leaf node reached, we create the reference toward the new node
+                    if (next == NONE) idxChild.set(i,keys.size());
                     i = next;
                 }
             } while (i != NONE);
         }
-        // create the new node
         addNode(key,val);
         return true;
     }
@@ -109,7 +111,8 @@ public class ArrayBSTDelete<Key extends Comparable<Key>, Value> {
      * @param key the key to search
      * @return the value attached to this key, null if the key is not present
      */
-    public Value get(Key key) {
+    public Value get(Key key)
+    {
         int i = getNodeIndex(key);
         if (i == NONE) return null;
         return values.get(i);
@@ -119,15 +122,15 @@ public class ArrayBSTDelete<Key extends Comparable<Key>, Value> {
      * Retrieves the node index with key if present,
      * NONE if not present
      */
-    private int getNodeIndex(Key key) {
-        if (!keys.isEmpty()) {
-            int i = 0;
-            while (i != NONE) {
-                int cmp = key.compareTo(keys.get(i));
-                if (cmp == 0) return i;
-                else if (cmp < 0) i = idxLeftNode.get(i);
-                else i = idxRightNode.get(i);
-            }
+    private int getNodeIndex(Key key)
+    {
+        int i = 0;
+        while (i != NONE)
+        {
+            int cmp = key.compareTo(keys.get(i));
+            if (cmp == 0)     return i;
+            else if (cmp < 0) i = idxLeftNode.get(i);
+            else              i = idxRightNode.get(i);
         }
         return NONE;
     }
@@ -137,30 +140,101 @@ public class ArrayBSTDelete<Key extends Comparable<Key>, Value> {
      * @param key the key to delete
      * @return true if the key was deleted, false if the key was not present
      */
-    public boolean delete(Key key) {
-        // TODO
-         return false;
+    // BEGIN : STUDENT
+    public boolean delete(Key key)
+    {
+        int idx = getNodeIndex(key);
+        if (idx == NONE) return false;
+
+        int parentIdx = getParentIdx(key);
+        int idx_leftChild = idxLeftNode.get(idx);
+        int idx_RightChild = idxRightNode.get(idx);
+        int minRightTreeIdx = NONE;
+        boolean removeNodeToDeleteIdx = true;
+
+        if ((idx_leftChild == NONE) && (idx_RightChild == NONE))  setParentLink(idx, parentIdx, NONE);
+        else if (idx_RightChild == NONE)                          setParentLink(idx, parentIdx, idx_leftChild);
+        else if (idx_leftChild == NONE)                           setParentLink(idx, parentIdx, idx_RightChild);
+        else
+        {
+            int rootRightTreeIdx = idxRightNode.get(idx);
+            minRightTreeIdx = getMinIdx(rootRightTreeIdx);
+            int parent_minRightTreeIdx = getParentIdx(keys.get(minRightTreeIdx));
+            keys.set(idx, keys.get(minRightTreeIdx));
+            values.set(idx, values.get(minRightTreeIdx));
+            int rightSubTree_minIdx = idxRightNode.get(minRightTreeIdx);
+            setParentLink(minRightTreeIdx, parent_minRightTreeIdx, rightSubTree_minIdx);
+            removeNodeToDeleteIdx = false;
+        }
+
+        removeElement(removeNodeToDeleteIdx ? idx : minRightTreeIdx);
+        updateIdx_Array(removeNodeToDeleteIdx ? idx : minRightTreeIdx);
+        return true;
     }
 
+    private void removeElement(int idx)
+    {
+        idxLeftNode.remove(idx);
+        idxRightNode.remove(idx);
+        keys.remove(idx);
+        values.remove(idx);
+    }
 
-    public static void main(String[] args) {
+    private void setParentLink(int nodeToDeleteIdx, int parentIdx, int newLinkedNodeIdx)
+    {
+        if (idxLeftNode.get(parentIdx) == nodeToDeleteIdx)  idxLeftNode.set(parentIdx, newLinkedNodeIdx);
+        else                                                idxRightNode.set(parentIdx, newLinkedNodeIdx);
+    }
+
+    private void updateIdx_Array(int idx)
+    {
+        int leftIdx;
+        int rightIdx;
+        for (int j = 0; j < idxLeftNode.size(); j++)
+        {
+            leftIdx = idxLeftNode.get(j);
+            if (leftIdx > idx) idxLeftNode.set(j, leftIdx - 1);
+
+            rightIdx = idxRightNode.get(j);
+            if (rightIdx > idx) idxRightNode.set(j, rightIdx - 1);
+        }
+    }
+
+    private int getMinIdx(int rootIdx)
+    {
+        while (idxLeftNode.get(rootIdx) != NONE) rootIdx = idxLeftNode.get(rootIdx);
+        return rootIdx;
+    }
+
+    private int getParentIdx(Key key)
+    {
+        int i = 0;
+        int parentIdx = NONE;
+        while (i != NONE)
+        {
+            int cmp = key.compareTo(keys.get(i));
+            if (cmp == 0)     return parentIdx;
+            else if (cmp < 0) { parentIdx = i; i = idxLeftNode.get(i); }
+            else              { parentIdx = i; i = idxRightNode.get(i); }
+        }
+        return NONE;
+    }
+    // END : STUDENT
+
+    public static void main(String[] args)
+    {
         ArrayBSTDelete<Integer,Character> bst = new ArrayBSTDelete<>();
 
-        // (12,A),(15,B),(5,C),(8,d),(1,E)
         bst.put(12,'A');
         bst.put(15,'B');
         bst.put(5,'C');
         bst.put(8,'D');
         bst.put(1,'E');
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++)
+        {
             bst.delete(15);
-            bst.put(15,'B');
+            bst.put(15,'C');
         }
-        System.out.println(bst.keys.size());
-
-
     }
-
-
 }

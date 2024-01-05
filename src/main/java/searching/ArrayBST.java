@@ -2,7 +2,6 @@ package searching;
 
 import java.util.ArrayList;
 
-
 /**
  *  We study a BST representation using an arrayList internal representation.
  *  Rather than using a Linked-Node Data-Structure, the left/right children
@@ -37,19 +36,19 @@ import java.util.ArrayList;
  *  class but feel free to add methods if needed.
  *
  */
-public class ArrayBST<Key extends Comparable<Key>, Value> {
+public class ArrayBST<Key extends Comparable<Key>, Value>
+{
 
     // The next four array lists should always have exactly equal size after a put
-
     public ArrayList<Key> keys;
     public ArrayList<Value> values;
-
-    public ArrayList<Integer> idxLeftNode; // idxLeftNode[i] = index of left node of i
+    public ArrayList<Integer> idxLeftNode;  // idxLeftNode[i] = index of left node of i
     public ArrayList<Integer> idxRightNode; // idxRightNode[i] = index of right node of i
 
     final int NONE = -1;
 
-    public ArrayBST() {
+    public ArrayBST()
+    {
         keys = new ArrayList<>();
         values = new ArrayList<>();
         idxLeftNode = new ArrayList<>();
@@ -63,9 +62,45 @@ public class ArrayBST<Key extends Comparable<Key>, Value> {
      * @param val the value that must be attached to this key
      * @return true if the key was added, false if already present and the value has simply been erased
      */
-    public boolean put(Key key, Value val) {
-         return false;
+    // BEGIN : STUDENT
+    public boolean put(Key key, Value val)
+    {
+        if (key == null) throw new IllegalArgumentException();
+
+        if (keys.isEmpty()) { add_element(key, val); return true; }
+
+        int compare_keys = key.compareTo(keys.get(0));
+
+        if (compare_keys == 0)     { values.set(0, val); return false; }
+        else if (compare_keys < 0) return put_value(key, val, idxLeftNode.get(0), 0, true);
+        else                       return put_value(key, val, idxRightNode.get(0), 0, false);
     }
+
+
+    public boolean put_value(Key key, Value val, int current_idx, int prevIdx, boolean leftSide)
+    {
+        if (current_idx == NONE)
+        {
+            add_element(key, val);
+            if (leftSide) idxLeftNode.set(prevIdx, keys.size() - 1);
+            if (!leftSide) idxRightNode.set(prevIdx, keys.size() - 1);
+            return true;
+        }
+
+        int compare_keys = key.compareTo(keys.get(current_idx));
+        if (compare_keys == 0)     { values.set(current_idx, val); return false; }
+        else if (compare_keys < 0) return put_value(key, val, idxLeftNode.get(current_idx), current_idx, true);
+        else                       return put_value(key, val, idxRightNode.get(current_idx), current_idx, false);
+    }
+
+    public void add_element(Key key, Value val)
+    {
+        keys.add(key);
+        values.add(val);
+        idxLeftNode.add(NONE);
+        idxRightNode.add(NONE);
+    }
+    // END : STUDENT
 
     /**
      * Return the value attached to this key, null if the key is not present
@@ -73,11 +108,18 @@ public class ArrayBST<Key extends Comparable<Key>, Value> {
      * @param key
      * @return the value attached to this key, null if the key is not present
      */
-    public Value get(Key key) {
-         return null;
+    // BEGIN : STUDENT
+    public Value get(Key key) { return binarySearchTree(0, key); }
+
+    public Value binarySearchTree(int current_idx, Key key)
+    {
+        if (current_idx == NONE) return null;
+
+        int compare_keys = key.compareTo(keys.get(current_idx));
+
+        if (compare_keys == 0)     return values.get(current_idx);
+        else if (compare_keys < 0) return binarySearchTree(idxLeftNode.get(current_idx), key);
+        else                       return binarySearchTree(idxRightNode.get(current_idx), key);
     }
-
-
-
-
+    // END : STUDENT
 }

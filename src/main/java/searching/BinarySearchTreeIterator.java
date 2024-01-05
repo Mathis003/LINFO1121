@@ -3,6 +3,7 @@ package searching;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Stack;
 
 /**
  * In this exercise, we are interested in implementing an iterator (BSTIterator) for a Binary Search Tree (BST).
@@ -22,7 +23,7 @@ import java.util.NoSuchElementException;
  * The iterator visits the nodes in this order: 3, 8, 9, 11, 12, 14, 15, 18, 20
  * We ask you to complete the BSTIterator class, which must implement the Iterator interface.
  *
- * The BSTNode are generic over their key (the integers in the example above) and implement the 
+ * The BSTNode are generic over their key (the integers in the example above) and implement the
  * BinaryNode and KeyNode interface available in the utils package.
  *
  * Hint: You have two strategies to implement this iterator Fail-Fast and Fail-Safe
@@ -37,28 +38,25 @@ import java.util.NoSuchElementException;
  * It is a good exercise to implement both version.
  *
  */
-public class BinarySearchTreeIterator<Key extends Comparable<Key>> implements Iterable<Key> {
-
+public class BinarySearchTreeIterator<Key extends Comparable<Key>> implements Iterable<Key>
+{
     private BSTNode<Key> root;
 
-    public BinarySearchTreeIterator() { };
+    public BinarySearchTreeIterator() {}
 
     /**
      * Returns the size of the tree
      */
-    public int size() {
-        return this.size(root);
-    }
+    public int size() { return this.size(root); }
 
     /**
      * Returns the size the subtree rooted at node
      *
      * @param node the root of the subtree
      */
-    private int size(BSTNode<Key> node) {
-        if (node == null) {
-            return 0;
-        }
+    private int size(BSTNode<Key> node)
+    {
+        if (node == null) return 0;
         return node.getSize();
     }
 
@@ -67,9 +65,7 @@ public class BinarySearchTreeIterator<Key extends Comparable<Key>> implements It
      *
      * @param key the value to add
      */
-    public void put(Key key) {
-        this.root = put(this.root, key);
-    }
+    public void put(Key key) { this.root = put(this.root, key); }
 
     /**
      * Adds a value in a subtree of the tree
@@ -77,117 +73,113 @@ public class BinarySearchTreeIterator<Key extends Comparable<Key>> implements It
      * @param node the root of the subtree
      * @param key the value to add
      */
-    private BSTNode<Key> put(BSTNode<Key> node, Key key) {
-        if (node == null) {
-            return new BSTNode<>(key, 1);
-        }
+    private BSTNode<Key> put(BSTNode<Key> node, Key key)
+    {
+        if (node == null) return new BSTNode<>(key, 1);
+
         int cmp = key.compareTo(node.getKey());
-        if (cmp < 0) {
-            node.setLeft(put(node.getLeft(), key));
-        } else if (cmp > 0) {
-            node.setRight(put(node.getRight(), key));
-        }
+        if (cmp < 0)      node.setLeft(put(node.getLeft(), key));
+        else if (cmp > 0) node.setRight(put(node.getRight(), key));
         node.setSize(1 + size(node.getLeft()) + size(node.getRight()));
         return node;
     }
 
     @Override
-    public Iterator<Key> iterator() {
-        return new BSTIterator();
-    }
+    public Iterator<Key> iterator() { return new BSTIterator(); }
 
-    private class BSTIterator implements Iterator<Key> {
+    // BEGIN : STUDENT
+    private class BSTIterator implements Iterator<Key>
+    {
+        Stack<Key> stack = new Stack<>();
+        int fixedSize;
 
+        public void fillStack(Stack<Key> stack, BSTNode<Key> root)
+        {
+            if (root == null) {return;}
+            fillStack(stack, root.right);
+            stack.push(root.key);
+            fillStack(stack, root.left);
+        }
 
-        public BSTIterator() {
+        public BSTIterator()
+        {
+            fillStack(stack, root);
+            fixedSize = stack.size();
         }
 
         @Override
-        public boolean hasNext() {
-			// TODO
-			 return false;
+        public boolean hasNext()
+        {
+            if (fixedSize != size()) throw new ConcurrentModificationException();
+            return (!stack.empty());
         }
 
         @Override
-        public Key next() {
-			// TODO
-			 return null;
+        public Key next()
+        {
+            if (!hasNext())          throw new NoSuchElementException();
+            if (fixedSize != size()) throw new ConcurrentModificationException();
+            return stack.pop();
         }
     }
+    // END : STUDENT
 
-    class BSTNode<K extends Comparable<K>> {
-
+    class BSTNode<K extends Comparable<K>>
+    {
         private BSTNode<K> left;
         private BSTNode<K> right;
         private K key;
         private int size;
 
-        public BSTNode(K key) {
+        public BSTNode(K key)
+        {
             this.left = null;
             this.right = null;
             this.key = key;
             this.size = 0;
         }
 
-        public BSTNode(K key, int size) {
+        public BSTNode(K key, int size)
+        {
             this.left = null;
             this.right = null;
             this.key = key;
             this.size = size;
         }
 
-        public BSTNode<K> getLeft() {
-            return this.left;
-        }
+        public BSTNode<K> getLeft() { return this.left; }
 
         @SuppressWarnings("unchecked")
-        public void setLeft(BSTNode<K> node) {
-            this.left = node;
-        }
+        public void setLeft(BSTNode<K> node) { this.left = node; }
 
-        public BSTNode<K> getRight() {
-            return this.right;
-        }
+        public BSTNode<K> getRight() { return this.right; }
 
         @SuppressWarnings("unchecked")
-        public void setRight(BSTNode<K> node) {
-            this.right = node;
-        }
+        public void setRight(BSTNode<K> node) { this.right = node; }
 
-        public K getKey() {
-            return this.key;
-        }
+        public K getKey() { return this.key; }
 
-        public void setKey(K newKey) {
-            this.key = newKey;
-        }
+        public void setKey(K newKey) { this.key = newKey; }
 
-        public int getSize() {
-            return this.size;
-        }
+        public int getSize() { return this.size; }
 
-        public void setSize(int newSize) {
-            this.size = newSize;
-        }
+        public void setSize(int newSize) { this.size = newSize; }
 
         /**
          * Adds a new value in the subtree rooted at this node
          */
-        public void add(K key) {
-            if (key.compareTo(this.key) > 0) {
-                if (this.right == null) {
-                    this.right = new BSTNode<>(key);
-                } else {
-                    this.right.add(key);
-                }
-            } else {
-                if (this.left == null) {
-                    this.left = new BSTNode<>(key);
-                } else {
-                    this.left.add(key);
-                }
+        public void add(K key)
+        {
+            if (key.compareTo(this.key) > 0)
+            {
+                if (this.right == null) this.right = new BSTNode<>(key);
+                else                    this.right.add(key);
+            }
+            else
+            {
+                if (this.left == null) this.left = new BSTNode<>(key);
+                else                   this.left.add(key);
             }
         }
     }
 }
-

@@ -25,93 +25,85 @@ package searching;
  * - The ceiled valued of 4 is 8
  * - The ceiled valued of 21 is null
  */
-public class BinarySearchTree {
-
+public class BinarySearchTree
+{
     /**
      * Returns the ceiled value of `value` in the tree rooted at `root`
      *
      * @param root the root of the tree
      * @param value the value we want to ceil
      */
-    public static Integer ceil(BSTNode<Integer> root, int value) {
-         return null;
+    // BEGIN : STUDENT
+    public static Integer ceil(BSTNode<Integer> root, int value) { return ceil_aux(root, value, null); }
+
+    public static Integer ceil_aux(BSTNode<Integer> root, int value, Integer currentBest)
+    {
+        if (root == null) return currentBest;
+        if (root.key.compareTo(value) == 0)     return value;
+        else if (root.key.compareTo(value) > 0) return ceil_aux(root.left, value, root.key);
+        else                                    return ceil_aux(root.right, value, currentBest);
     }
+    // END : STUDENT
 
-
-    static class BSTNode<K extends Comparable<K>> {
-
+    static class BSTNode<K extends Comparable<K>>
+    {
         private BSTNode<K> left;
         private BSTNode<K> right;
         private K key;
         private int size;
 
-        public BSTNode(K key) {
+        public BSTNode(K key)
+        {
             this.left = null;
             this.right = null;
             this.key = key;
             this.size = 0;
         }
 
-        public BSTNode(K key, int size) {
+        public BSTNode(K key, int size)
+        {
             this.left = null;
             this.right = null;
             this.key = key;
             this.size = size;
         }
 
-        public BSTNode<K> getLeft() {
+        public BSTNode<K> getLeft()
+        {
             return this.left;
         }
 
         @SuppressWarnings("unchecked")
-        public void setLeft(BSTNode<K> node) {
-            this.left = node;
-        }
+        public void setLeft(BSTNode<K> node) { this.left = node; }
 
-        public BSTNode<K> getRight() {
-            return this.right;
-        }
+        public BSTNode<K> getRight() { return this.right; }
 
         @SuppressWarnings("unchecked")
-        public void setRight(BSTNode<K> node) {
-            this.right = node;
-        }
+        public void setRight(BSTNode<K> node) { this.right = node; }
 
-        public K getKey() {
-            return this.key;
-        }
+        public K getKey() { return this.key; }
 
-        public void setKey(K newKey) {
-            this.key = newKey;
-        }
+        public void setKey(K newKey) { this.key = newKey; }
 
-        public int getSize() {
-            return this.size;
-        }
+        public int getSize() { return this.size; }
 
-        public void setSize(int newSize) {
-            this.size = newSize;
-        }
+        public void setSize(int newSize) { this.size = newSize; }
 
         /**
          * Adds a new value in the subtree rooted a this node
-         */
-        public void add(K key) {
-            if (key.compareTo(this.key) > 0) {
-                if (this.right == null) {
-                    this.right = new BSTNode<>(key);
-                } else {
-                    this.right.add(key);
-                }
-            } else {
-                if (this.left == null) {
-                    this.left = new BSTNode<>(key);
-                } else {
-                    this.left.add(key);
-                }
+         **/
+        public void add(K key)
+        {
+            if (key.compareTo(this.key) > 0)
+            {
+                if (this.right == null) this.right = new BSTNode<>(key);
+                else this.right.add(key);
+            }
+            else
+            {
+                if (this.left == null) this.left = new BSTNode<>(key);
+                else this.left.add(key);
             }
         }
     }
-
 }
-

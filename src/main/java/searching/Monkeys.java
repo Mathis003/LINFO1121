@@ -1,8 +1,7 @@
 package searching;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
-
 
 /**
  * Problem 21 of AdventOfCode 2022
@@ -65,43 +64,70 @@ import java.util.List;
  *
  * Feel free to use existing java classes for your algorithm.
  */
-public class Monkeys {
-
-
+public class Monkeys
+{
     /**
      * Compute the number for monkey named "root.
      * Your algorithm should run in O(n) where n is
      * the size of the input.
      */
-    public static long evaluateRoot(List<Monkey> input) {
-         return -1;
-
+    public static long evaluateRoot(List<Monkey> input)
+    {
+        HashMap<String, Monkey> map = new HashMap<>();
+        for (Monkey monkey : input) map.put(monkey.name, monkey);
+        return evaluateRoot(map.get("root"), map);
     }
 
-
-
-
-
-    static class Monkey {
-        String name;
+    public static long evaluateRoot(Monkey root, HashMap<String, Monkey> map)
+    {
+        if (root == null)                         return 0;
+        else if (root instanceof YellingMonkey)   return ((YellingMonkey) root).number;
+        else if (root instanceof OperationMonkey)
+        {
+            OperationMonkey m = (OperationMonkey) root;
+            long first_number = evaluateRoot(map.get(m.leftMonkey), map);
+            long second_number = evaluateRoot(map.get(m.rightMonkey), map);
+            switch (m.op)
+            {
+                case '+':
+                    return first_number + second_number;
+                case '-':
+                    return first_number - second_number;
+                case '*':
+                    return first_number * second_number;
+                case '/':
+                    return first_number / second_number;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+        else throw new IllegalArgumentException();
     }
-    static class YellingMonkey extends Monkey {
+
+    static class Monkey { String name; }
+
+    static class YellingMonkey extends Monkey
+    {
         int number;
-        public YellingMonkey(String name,int number) {
+
+        public YellingMonkey(String name, int number)
+        {
             this.name = name;
             this.number = number;
         }
 
         @Override
-        public String toString() {
-            return name+": "+number;
-        }
+        public String toString() { return name + ": " + number; }
     }
-    static class OperationMonkey extends Monkey {
+
+    static class OperationMonkey extends Monkey
+    {
         char op;
         String leftMonkey;
         String rightMonkey;
-        public OperationMonkey(String name, String left, char op, String right) {
+
+        public OperationMonkey(String name, String left, char op, String right)
+        {
             this.name = name;
             this.leftMonkey = left;
             this.op = op;
@@ -109,10 +135,6 @@ public class Monkeys {
         }
 
         @Override
-        public String toString() {
-            return name+": "+leftMonkey+" "+op+" "+rightMonkey;
-        }
+        public String toString() { return name+": "+leftMonkey+" "+op+" "+rightMonkey; }
     }
-
-
 }

@@ -1,48 +1,36 @@
+/*
+This is not my code !
+I did not succeed this exercice :/
+*/
+
 package searching;
 
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
-/**
- * In this exercise, you must compute the skyline defined by a set of buildings.
- * When viewed from far away, the buildings only appear as if they were on a two-dimensionnal line.
- * Hence, they can be defined by three integers: The start of the building (left side), the height
- * of the building and the end of the building (right side).
- * For example, a building defined by (2, 5, 4) would look like
- *
- *   xxx
- *   xxx
- *   xxx
- *   xxx
- *   xxx
- * ________
- *
- * Obviously in practice buildings are not on a line, so they can overlap. If we add a new, smaller,
- * building in front of the previous one, defined by (3, 3, 6), then the view looks like:
- *
- *   xxx
- *   xxx
- *   xyyyy
- *   xyyyy
- *   xyyyy
- * ________
- *
- * The skyline is then define as the line that follows the highest building at any given points.
- * Visually, for the above example, it gives:
- *
- *   sss
- *      
- *      ss
- *        
- *        
- * ________
- *
- *
- * We ask you to compute, gien a set of building, their skyline.
- */
-public class Skyline {
+public class Skyline
+{
+    // BEGIN : STUDENT
+    public static class BuildingPoint implements Comparable<BuildingPoint>
+    {
+        int x;
+        boolean isStart;
+        int height;
 
+        public BuildingPoint(int x, boolean isStart, int height)
+        {
+            this.x = x;
+            this.isStart = isStart;
+            this.height = height;
+        }
+
+        @Override
+        public int compareTo(BuildingPoint other)
+        {
+            if (this.x != other.x) return this.x - other.x;
+            return (this.isStart ? -this.height : this.height) - (other.isStart ? -other.height : other.height);
+        }
+    }
+    // END : STUDENT
 
     /**
      *   The buildings are defined with triplets (left, height, right).
@@ -55,8 +43,49 @@ public class Skyline {
      *          A key point is the left endpoint of a horizontal line segment.
      *          The key points are sorted by their x-coordinate in the list.
      */
-    public static List<int[]> getSkyline(int[][] buildings) {
-		 return null;
-    }
+    public static List<int[]> getSkyline(int[][] buildings)
+    {
+        BuildingPoint[] points = new BuildingPoint[buildings.length * 2];
+        int index = 0;
+        for (int[] building : buildings)
+        {
+            points[index] = new BuildingPoint(building[0], true, building[1]);
+            points[index + 1] = new BuildingPoint(building[2], false, building[1]);
+            index += 2;
+        }
 
+        Arrays.sort(points);
+
+        TreeMap<Integer, Integer> queue = new TreeMap<>();
+        queue.put(0, 1);
+        int prevMaxHeight = 0;
+
+        List<int[]> result = new ArrayList<>();
+
+        for (BuildingPoint point : points)
+        {
+            if (point.isStart)
+            {
+                queue.compute(point.height, (key, value) -> {
+                    if (value != null) return value + 1;
+                    return 1;
+                });
+            } else
+            {
+                queue.compute(point.height, (key, value) -> {
+                    if (value == 1) return null;
+                    return value - 1;
+                });
+            }
+
+            int currentMaxHeight = queue.lastKey();
+
+            if (prevMaxHeight != currentMaxHeight)
+            {
+                result.add(new int[]{point.x, currentMaxHeight});
+                prevMaxHeight = currentMaxHeight;
+            }
+        }
+        return result;
+    }
 }

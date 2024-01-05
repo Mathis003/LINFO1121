@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-
 /**
  * This class represents a map that maps birthdays to persons.
  * Your map should be able to handle multiple people born on the same day.
@@ -23,12 +22,16 @@ import java.util.TreeMap;
  * Feel free to add instance variables and new methods.
  * Also feel free to import and use existing java classes.
  */
-class BirthdayMap {
-    // Hint: feel free to use existing java classes from Java such as java.util.TreeMap
+class BirthdayMap
+{
+    // BEGIN : STUDENT
+    TreeMap<String, List<Person>> map;
 
-    BirthdayMap() {
-        // TODO
+    BirthdayMap()
+    {
+        this.map = new TreeMap<>();
     }
+    // END : STUDENT
 
     /**
      * Adds a person to the map.
@@ -37,9 +40,13 @@ class BirthdayMap {
      * where n is the number of different birthdays in the map.
      * @param person
      */
-    void addPerson(Person person) {
-        // TODO
+    // BEGIN : STUDENT
+    void addPerson(Person person)
+    {
+        this.map.putIfAbsent(person.birthday, new ArrayList<>());
+        this.map.get(person.birthday).add(person);
     }
+    // END : STUDENT
 
     /**
      * The function returns a list of Person objects in the map born on the specified date.
@@ -48,10 +55,9 @@ class BirthdayMap {
      * @return A list of Person objects representing all people born on the specified date.
      *          An empty list is returned if no entries are found for the specified date.
      */
-    List<Person> getPeopleBornOnDate(String date) {
-        // TODO
-         return null;
-    }
+    // BEGIN : STUDENT
+    List<Person> getPeopleBornOnDate(String date) { return this.map.getOrDefault(date, new ArrayList<>()); }
+    // END : STUDENT
 
 
     /**
@@ -62,16 +68,22 @@ class BirthdayMap {
      * @return A consolidated list of Person objects representing all people born in the specified year.
      *         If no entries are found for the specified year, the function returns an empty list.
      */
-    List<Person> getPeopleBornInYear(String year) {
-        // TODO
-         return null;
+    // BEGIN : STUDENT
+    List<Person> getPeopleBornInYear(String year)
+    {
+        SortedMap<String, List<Person>> subMap = this.map.subMap(year + "-01-01", (Integer.parseInt(year) + 1) + "-01-01");
+        List<Person> result = new ArrayList<>();
+        for (List<Person> people : subMap.values()) result.addAll(people);
+        return result;
     }
+    // END : STUDENT
 
 
     /**
      * Example usage of the BirthdayMap class, feel free to modify.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         Person alice = new Person("Alice", "2000-07-17");
         Person bob = new Person("Bob", "2000-08-15");
         Person charlie = new Person("Charlie", "2001-06-06");
@@ -84,21 +96,19 @@ class BirthdayMap {
         System.out.println(map.getPeopleBornOnDate("2000-07-17"));
         System.out.println(map.getPeopleBornInYear("2000"));
     }
-
 }
 
-class Person {
+class Person
+{
     String name;
     String birthday; // format: YYYY-MM-DD
 
-    Person(String name, String birthday) {
+    Person(String name, String birthday)
+    {
         this.name = name;
         this.birthday = birthday;
     }
 
     @Override
-    public String toString() {
-        return this.name;
-    }
+    public String toString() { return this.name; }
 }
-
