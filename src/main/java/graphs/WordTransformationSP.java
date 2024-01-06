@@ -2,7 +2,6 @@ package graphs;
 
 import java.util.*;
 
-
 /**
  * You are asked to implement the WordTransformationSP
  * class which allows to find the shortest path
@@ -21,8 +20,8 @@ import java.util.*;
  * function that returns the minimum cost to reach String B
  * from A using the rotation operation.
  */
-public class WordTransformationSP {
-
+public class WordTransformationSP
+{
     /**
      * Rotate the substring between start and end of a given string s
      * eg. s = HAMBURGER, rotation(s,4,8) = HAMBEGRUR i.e. HAMB + EGRU + R
@@ -36,9 +35,8 @@ public class WordTransformationSP {
      * @param end
      * @return rotated string
      */
-    public static String rotation(String s, int start, int end) {
-        return s.substring(0, start) + new StringBuilder(s.substring(start, end)).reverse().toString() + s.substring(end);
-    }
+    public static String rotation(String s, int start, int end)
+    { return s.substring(0, start) + new StringBuilder(s.substring(start, end)).reverse().toString() + s.substring(end); }
 
     /**
      * Compute the minimal cost from string "from" to string "to" representing the shortest path
@@ -47,10 +45,46 @@ public class WordTransformationSP {
      * @param to
      * @return
      */
-    public static int minimalCost(String from, String to) {
-        // TODO
-         return 0;
+    public static int minimalCost(String from, String to)
+    {
+        HashMap<String, Integer> distTo = new HashMap<>();
+        distTo.put(from, 0);
+
+        PriorityQueue<Rotation> PQ = new PriorityQueue<>();
+        PQ.add(new Rotation(from, 0));
+
+        while (!PQ.isEmpty())
+        {
+            Rotation rot = PQ.poll();
+
+            for (int i = 0; i <= rot.str.length() - 2; i++)
+            {
+                for (int j = i + 2; j <= rot.str.length(); j++)
+                {
+                    String newStr = rotation(rot.str, i, j);
+                    if (!distTo.containsKey(newStr) || rot.cost + j - i < distTo.get(newStr))
+                    {
+                        distTo.put(newStr, rot.cost + j - i);
+                        PQ.offer(new Rotation(newStr, rot.cost + j - i));
+                    }
+                }
+            }
+        }
+        return distTo.get(to);
     }
 
+    public static class Rotation implements Comparable<Rotation>
+    {
+        String str;
+        int cost;
 
+        public Rotation(String str, int cost)
+        {
+            this.str = str;
+            this.cost = cost;
+        }
+
+        @Override
+        public int compareTo(Rotation o)  { return this.cost - o.cost; }
+    }
 }

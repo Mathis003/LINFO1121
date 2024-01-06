@@ -13,7 +13,7 @@ import java.util.*;
  * NASA asks you to plan an escape route to reach a habitable
  * galaxy if ever the earth were to no longer be.
  * However, each by-pass observed between two galaxies is
- * functional only for a specifi period of time (expressed in years)
+ * functional only for a specific period of time (expressed in years)
  * and it is no longer usable once this period has passed.
  * In order to save humanity, we ask you to design an optimal escape plan,
  * to a habitable galaxy using only functional by-passes.
@@ -23,7 +23,8 @@ import java.util.*;
  * is it possible to reach a viable galaxy (any of them) and
  * how long would it take at least knowing that each by-pass takes 1 year to be crossed ?
  */
-public class GalaxyPath {
+public class GalaxyPath
+{
     /**
      * Hint: Read the first small unit test with 5 galaxies for
      *       a small example and its expected solution.
@@ -48,10 +49,37 @@ public class GalaxyPath {
      *         -1 if no path exists
      *
      */
-    public static int findPath(int [][] graph, int source, Set<Integer> destinations) {
-        // TODO Your algorithm should execute in O(n^2) where n is the number of galaxies (nodes)
-         return -2;
+    // Your algorithm should execute in O(n^2) where n is the number of galaxies (nodes)
+    public static int findPath(int[][] graph, int source, Set<Integer> destinations)
+    {
+        Queue<TimeSpendGalaxy> q = new LinkedList<>();
+        q.add(new TimeSpendGalaxy(source, 0));
+
+        while (!q.isEmpty())
+        {
+            TimeSpendGalaxy current = q.remove();
+            int galaxyID = current.galaxyID;
+            if (destinations.contains(galaxyID)) return current.timeSpend;
+
+            for (int i = 0; i < graph[galaxyID].length; i++)
+            {
+                int newGalaxyID = i;
+                int timePath = graph[galaxyID][i];
+                if (timePath != 0 && current.timeSpend < timePath) q.add(new TimeSpendGalaxy(newGalaxyID, current.timeSpend + 1));
+            }
+        }
+        return -1;
+    }
+
+    public static class TimeSpendGalaxy
+    {
+        int galaxyID;
+        int timeSpend;
+
+        public TimeSpendGalaxy(int galaxyID, int timeSpend)
+        {
+            this.galaxyID = galaxyID;
+            this.timeSpend = timeSpend;
+        }
     }
 }
-
-

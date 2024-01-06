@@ -1,7 +1,9 @@
 package graphs;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * Consider this class, BreadthFirstShortestPaths, which computes the shortest path between
@@ -27,8 +29,8 @@ import java.util.List;
  * <p>
  * You are asked to implement all the TODOs of the BreadthFirstShortestPaths class.
  */
-public class BreadthFirstShortestPaths {
-
+public class BreadthFirstShortestPaths
+{
     private static final int INFINITY = Integer.MAX_VALUE;
     private boolean[] marked; // marked[v] = is there an s-v path
     private int[] distTo;     // distTo[v] = number of edges shortest s-v path
@@ -40,18 +42,39 @@ public class BreadthFirstShortestPaths {
      * @param G       the graph
      * @param sources the source vertices
      */
-    public BreadthFirstShortestPaths(Graph G, Iterable<Integer> sources) {
+    public BreadthFirstShortestPaths(Graph G, Iterable<Integer> sources)
+    {
         marked = new boolean[G.V()];
         distTo = new int[G.V()];
-        for (int v = 0; v < G.V(); v++) {
-            distTo[v] = INFINITY;
-        }
+        for (int v = 0; v < G.V(); v++) distTo[v] = INFINITY;
         bfs(G, sources);
     }
 
     // Breadth-first search from multiple sources
-    private void bfs(Graph G, Iterable<Integer> sources) {
-        // TODO
+    private void bfs(Graph G, Iterable<Integer> sources)
+    {
+        Queue<Integer> q = new LinkedList<>();
+
+        for (int source : sources)
+        {
+            marked[source] = true;
+            distTo[source] = 0;
+            q.add(source);
+        }
+
+        while (!q.isEmpty())
+        {
+            int v = q.remove();
+            for (int w: G.adj(v))
+            {
+                if (!marked[w])
+                {
+                    marked[w] = true;
+                    distTo[w] = Math.min(distTo[w], distTo[v] + 1);
+                    q.add(w);
+                }
+            }
+        }
     }
 
     /**
@@ -60,10 +83,7 @@ public class BreadthFirstShortestPaths {
      * @param v the vertex
      * @return true if there is a path, and false otherwise
      */
-    public boolean hasPathTo(int v) {
-        // TODO
-         return false;
-    }
+    public boolean hasPathTo(int v) { return marked[v]; }
 
     /**
      * Returns the number of edges in a shortest path
@@ -72,56 +92,41 @@ public class BreadthFirstShortestPaths {
      * @param v the vertex
      * @return the number of edges in a shortest path
      */
-    public int distTo(int v) {
-        // TODO
-         return -1;
-    }
+    public int distTo(int v)  { return distTo[v]; }
 
-    static class Graph {
-
+    static class Graph
+    {
         private List<Integer>[] edges;
 
         public Graph(int nbNodes)
         {
             this.edges = (ArrayList<Integer>[]) new ArrayList[nbNodes];
-            for (int i = 0;i < edges.length;i++)
-            {
-                edges[i] = new ArrayList<>();
-            }
+            for (int i = 0;i < edges.length;i++) edges[i] = new ArrayList<>();
         }
 
         /**
          * @return the number of vertices
          */
-        public int V() {
-            return edges.length;
-        }
+        public int V() { return edges.length; }
 
         /**
          * @return the number of edges
          */
-        public int E() {
+        public int E()
+        {
             int count = 0;
-            for (List<Integer> bag : edges) {
-                count += bag.size();
-            }
-
-            return count/2;
+            for (List<Integer> bag : edges) count += bag.size();
+            return count / 2;
         }
 
         /**
          * Add edge v-w to this graph
          */
-        public void addEdge(int v, int w) {
-            edges[v].add(w);
-            edges[w].add(v);
-        }
+        public void addEdge(int v, int w)  { edges[v].add(w); edges[w].add(v); }
 
         /**
          * @return the vertices adjacent to v
          */
-        public Iterable<Integer> adj(int v) {
-            return edges[v];
-        }
+        public Iterable<Integer> adj(int v) { return edges[v]; }
     }
 }

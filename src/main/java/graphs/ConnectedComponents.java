@@ -19,63 +19,72 @@ import java.util.List;
  *
  *
  */
-public class ConnectedComponents {
-
+public class ConnectedComponents
+{
+    private static boolean[] marked;
 
     /**
      * @return the number of connected components in g
      */
-    public static int numberOfConnectedComponents(Graph g) {
-        // TODO
-         return -1;
+    // TODO
+    public static int numberOfConnectedComponents(Graph g)
+    {
+        int nbComponents = 0;
+        marked = new boolean[g.V()];
+        for (int i = 0; i < g.V(); i++)
+        {
+            if (!marked[i])
+            {
+                marked[i] = true;
+                dfs(g, i);
+                nbComponents++;
+            }
+        }
+        return nbComponents;
     }
 
-    static class Graph {
+    private static void dfs(Graph G, int v)
+    {
+        marked[v] = true;
+        for (int w : G.adj(v))
+        {
+            if (!marked[w]) dfs(G, w);
+        }
+    }
 
+    static class Graph
+    {
         private List<Integer>[] edges;
 
         public Graph(int nbNodes)
         {
             this.edges = (ArrayList<Integer>[]) new ArrayList[nbNodes];
-            for (int i = 0;i < edges.length;i++)
-            {
-                edges[i] = new ArrayList<>();
-            }
+            for (int i = 0;i < edges.length;i++) edges[i] = new ArrayList<>();
         }
 
         /**
          * @return the number of vertices
          */
-        public int V() {
-            return edges.length;
-        }
+        public int V() { return edges.length; }
 
         /**
          * @return the number of edges
          */
-        public int E() {
+        public int E()
+        {
             int count = 0;
-            for (List<Integer> bag : edges) {
-                count += bag.size();
-            }
-
-            return count/2;
+            for (List<Integer> bag : edges) count += bag.size();
+            return count / 2;
         }
 
         /**
          * Add edge v-w to this graph
          */
-        public void addEdge(int v, int w) {
-            edges[v].add(w);
-            edges[w].add(v);
-        }
+        public void addEdge(int v, int w)  { edges[v].add(w); edges[w].add(v); }
 
         /**
          * @return the vertices adjacent to v
          */
-        public Iterable<Integer> adj(int v) {
-            return edges[v];
-        }
+        public Iterable<Integer> adj(int v) { return edges[v]; }
     }
-
 }

@@ -52,9 +52,9 @@ import java.util.*;
  * - Consider the function TreeMap.subMap that might be useful
  *   (https://docs.oracle.com/javase/8/docs/api/java/util/TreeMap.html#subMap-K-boolean-K-boolean-) ?
  */
-public class Trains {
-
-    /** 
+public class Trains
+{
+    /**
      * Considering given starting station and time, compute the earliest hour at which
      * any accessible station can be reached.
      * @param relations a list of relations that connect a pair (station, time) (the key)
@@ -70,37 +70,57 @@ public class Trains {
      *         the earliest hour at which it can be reached.
      *         The map must contain the starting station
      */
-    public static Map<String, Integer> reachableEarliest(HashMap<StationTime, LinkedList<StationTime>> relations, StationTime startPoint) {
-         return null; 
+    public static Map<String, Integer> reachableEarliest(HashMap<StationTime, LinkedList<StationTime>> relations, StationTime startPoint)
+    {
+        Map<String, Integer> result = new HashMap<>();
+        result.put(startPoint.station, startPoint.time);
+
+        PriorityQueue<StationTime> Q = new PriorityQueue<>((x, y) -> x.compareTo(y));
+        for (StationTime key : relations.keySet()) Q.add(key);
+
+        while (!Q.isEmpty())
+        {
+            StationTime u = Q.poll();
+            if (result.containsKey(u.station) && u.time >= result.get(u.station))
+            {
+                for (StationTime neighbor : relations.get(u))
+                {
+                    if (result.containsKey(neighbor.station))
+                    {
+                        if (neighbor.time < result.get(neighbor.station)) result.put(neighbor.station, neighbor.time);
+                    } else result.put(neighbor.station, neighbor.time);
+                }
+            }
+        }
+        return result;
     }
 
-    public static class StationTime implements Comparable<StationTime> {
+    public static class StationTime implements Comparable<StationTime>
+    {
+        public final String station;
+        public final int time;
 
-        public final String station; 
-        public final int time;  
-    
-        public StationTime(String station, int time) {
+        public StationTime(String station, int time)
+        {
             this.station = station;
             this.time = time;
         }
-    
+
         @Override
-        public int hashCode() {
-            return station.hashCode() ^ Integer.hashCode(~time);
-        }
-    
+        public int hashCode() { return station.hashCode() ^ Integer.hashCode(~time); }
+
         @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof StationTime)
-                return ((StationTime) obj).station.equals(station) && ((StationTime) obj).time == time;
+        public boolean equals(Object obj)
+        {
+            if (obj instanceof StationTime) return ((StationTime) obj).station.equals(station) && ((StationTime) obj).time == time;
             return false;
         }
-    
+
         @Override
-        public int compareTo(StationTime o) {
+        public int compareTo(StationTime o)
+        {
             int out = time - o.time;
-            if(out == 0)
-                return station.compareTo(o.station);
+            if (out == 0) return station.compareTo(o.station);
             return out;
         }
     }

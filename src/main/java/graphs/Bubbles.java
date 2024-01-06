@@ -1,5 +1,7 @@
 package graphs;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -74,8 +76,8 @@ import java.util.List;
  * If you try, you will receive an UnsupportedOperationException.
  *
  */
-public class Bubbles {
-
+public class Bubbles
+{
     /**
      *
      * @param contacts
@@ -85,57 +87,91 @@ public class Bubbles {
      *         The order doesn't matter, both within the
      *         ForbiddenRelation and in the list.
      */
-    public static List<ForbiddenRelation> cleanBubbles(List<Contact> contacts, int n) {
-        // TODO
-         return null;
-    }
+    public static List<ForbiddenRelation> cleanBubbles(List<Contact> contacts, int n)
+    {
+        HashMap<String, List<String>> listContacts = new HashMap<>();
+        for (Contact contact : contacts)
+        {
+            List<String> currList1 = listContacts.getOrDefault(contact.a, new LinkedList<>());
+            List<String> currList2 = listContacts.getOrDefault(contact.b, new LinkedList<>());
 
+            if (!currList1.contains(contact.b))
+            {
+                currList1.add(contact.b);
+                listContacts.put(contact.a, currList1);
+            }
+
+            if (!currList2.contains(contact.a))
+            {
+                currList2.add(contact.a);
+                listContacts.put(contact.b, currList2);
+            }
+        }
+
+        List<ForbiddenRelation> forbiddenRelations = new LinkedList<>();
+
+        for (Contact c : contacts)
+        {
+            if (!listContacts.get(c.a).contains(c.b)) continue;
+
+            if (listContacts.get(c.a).size() > n && listContacts.get(c.b).size() > n)
+            {
+                forbiddenRelations.add(new ForbiddenRelation(c.a, c.b));
+                listContacts.get(c.a).remove(c.b);
+                listContacts.get(c.b).remove(c.a);
+            }
+        }
+
+        for (Contact c : contacts)
+        {
+            if (!listContacts.get(c.a).contains(c.b)) continue;
+
+            if (listContacts.get(c.a).size() > n || listContacts.get(c.b).size() > n)
+            {
+                forbiddenRelations.add(new ForbiddenRelation(c.a, c.b));
+                listContacts.get(c.a).remove(c.b);
+                listContacts.get(c.b).remove(c.a);
+            }
+        }
+        return forbiddenRelations;
+    }
 }
 
 
-
-class Contact {
+class Contact
+{
     public final String a, b;
 
-    public Contact(String a, String b) {
+    public Contact(String a, String b)
+    {
         // We always force a < b for simplicity.
-        if(a.compareTo(b) > 0) {
-            this.b = a;
-            this.a = b;
-        }
-        else {
-            this.a = a;
-            this.b = b;
-        }
+        if (a.compareTo(b) > 0) { this.b = a; this.a = b; }
+        else                    { this.a = a; this.b = b; }
     }
 }
 
-class ForbiddenRelation implements Comparable<ForbiddenRelation> {
+class ForbiddenRelation implements Comparable<ForbiddenRelation>
+{
     public final String a, b;
 
-    public ForbiddenRelation(String a, String b) {
+    public ForbiddenRelation(String a, String b)
+    {
         // We always force a < b for simplicity.
-        if(a.compareTo(b) > 0) {
-            this.b = a;
-            this.a = b;
-        }
-        else {
-            this.a = a;
-            this.b = b;
-        }
+        if (a.compareTo(b) > 0) { this.b = a; this.a = b; }
+        else                    { this.a = a; this.b = b; }
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof ForbiddenRelation)
-            return a.equals(((ForbiddenRelation) obj).a) && b.equals(((ForbiddenRelation) obj).b);
+    public boolean equals(Object obj)
+    {
+        if (obj instanceof ForbiddenRelation) return a.equals(((ForbiddenRelation) obj).a) && b.equals(((ForbiddenRelation) obj).b);
         return false;
     }
 
     @Override
-    public int compareTo(ForbiddenRelation o) {
-        if(a.equals(o.a))
-            return b.compareTo(o.b);
+    public int compareTo(ForbiddenRelation o)
+    {
+        if (a.equals(o.a)) return b.compareTo(o.b);
         return a.compareTo(o.a);
     }
 }

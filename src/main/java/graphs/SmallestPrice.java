@@ -33,8 +33,9 @@ import java.util.*;
  *
  * Feel free to use existing java classes.
  */
-public class SmallestPrice {
 
+public class SmallestPrice
+{
     /**
      *
      * @param graph  a weighted graph with each node being a place and
@@ -46,62 +47,104 @@ public class SmallestPrice {
      * @return the smallest price to buy the gift from the source
      *         or -1 if there is no path within the maxTime.
      */
-    public static int getSmallestPrice(WeightedGraph graph, int source, int maxTime, List<Pair> destinations) {
-        // TODO
-         return -1;
+    public static int getSmallestPrice(WeightedGraph graph, int source, int maxTime, List<Pair> destinations)
+    {
+        HashMap<Integer, Integer> destToPrice = new HashMap<>();
+        for (Pair p : destinations) destToPrice.put(p.getNode(), p.getPrice());
 
+        int[] distTo = new int[graph.V()];
+        Arrays.fill(distTo, Integer.MAX_VALUE);
+        distTo[source] = 0;
+
+        int minPrice = Integer.MAX_VALUE;
+
+        PriorityQueue<Node> PQ = new PriorityQueue<Node>();
+        PQ.offer(new Node(source, 0));
+
+        while (!PQ.isEmpty() && destToPrice.size() > 0)
+        {
+            Node curr = PQ.poll();
+            int v = curr.getNode();
+            int timePassed = curr.getTimePassed();
+
+            int price = destToPrice.getOrDefault(v, -1);
+            if (price != -1 && price < minPrice)
+            {
+                minPrice = price;
+                destToPrice.remove(v);
+            }
+
+            for (DirectedEdge edge : graph.outEdges(v))
+            {
+                int w = edge.to();
+                int time = edge.weight();
+
+                if (timePassed + time <= maxTime && distTo[v] + time < distTo[w])
+                {
+                    distTo[w] = distTo[v] + time;
+                    PQ.offer(new Node(w, timePassed + time));
+                }
+            }
+        }
+        return (minPrice == Integer.MAX_VALUE) ? -1 : minPrice;
     }
 
+    static class Node implements Comparable<Node>
+    {
+        int node;
+        int timePassed;
 
+        public Node(int node, int timePassed)
+        {
+            this.node = node;
+            this.timePassed = timePassed;
+        }
 
+        public int getNode() { return node; }
 
-    static class Pair {
+        public int getTimePassed() { return timePassed; }
+
+        @Override
+        public int compareTo(Node o)  { return this.timePassed - o.timePassed; }
+    }
+
+    static class Pair
+    {
         private final int node;
         private final int price;
 
-        public Pair(int node, int price) {
+        public Pair(int node, int price)
+        {
             this.node = node;
             this.price = price;
         }
 
-        public int getNode() {
-            return node;
-        }
+        public int getNode() { return node; }
 
-        public int getPrice() {
-            return price;
-        }
-
+        public int getPrice() { return price; }
     }
 
 
-    static class WeightedGraph {
-
+    static class WeightedGraph
+    {
         private final int V;                // number of nodes in this digraph
         private int E;                      // number of edges in this digraph
-        private List<DirectedEdge>[] adj;    // adj[v] = adjacency list for node v
+        private List<DirectedEdge>[] adj;   // adj[v] = adjacency list for node v
 
-
-
-        public WeightedGraph(int V) {
+        public WeightedGraph(int V)
+        {
             this.V = V;
             this.E = 0;
             adj = (ArrayList<DirectedEdge>[]) new ArrayList[V];
-            for (int v = 0; v < V; v++) {
-                adj[v] = new ArrayList<>();
-            }
+            for (int v = 0; v < V; v++) adj[v] = new ArrayList<>();
         }
 
-        public int V() {
-            return V;
-        }
+        public int V() { return V; }
 
-        public int E() {
-            return E;
-        }
+        public int E() { return E; }
 
-
-        public void addEdge(DirectedEdge e) {
+        public void addEdge(DirectedEdge e)
+        {
             int v = e.from();
             int w = e.to();
             adj[v].add(e);
@@ -113,15 +156,11 @@ public class SmallestPrice {
          * @param from a node of the graph
          * @return an Iterator with the outgoing edges adjacent to from
          */
-        public Iterable<DirectedEdge> outEdges(int from) {
-            return adj[from];
-        }
-
-
+        public Iterable<DirectedEdge> outEdges(int from) { return adj[from]; }
     }
 
-    static class DirectedEdge {
-
+    static class DirectedEdge
+    {
         private final int v;
         private final int w;
         private final int weight;
@@ -134,7 +173,8 @@ public class SmallestPrice {
          * @param w      the head node
          * @param weight the weight of the directed edge
          */
-        public DirectedEdge(int v, int w, int weight) {
+        public DirectedEdge(int v, int w, int weight)
+        {
             if (v < 0) throw new IllegalArgumentException("Vertex names must be non-negative integers");
             if (w < 0) throw new IllegalArgumentException("Vertex names must be non-negative integers");
             this.v = v;
@@ -147,29 +187,20 @@ public class SmallestPrice {
          *
          * @return the tail node of the directed edge
          */
-        public int from() {
-            return v;
-        }
+        public int from() { return v; }
 
         /**
          * Returns the head node of the directed edge.
          *
          * @return the head node of the directed edge
          */
-        public int to() {
-            return w;
-        }
+        public int to() { return w; }
 
         /**
          * Returns the weight of the directed edge.
          *
          * @return the weight of the directed edge
          */
-        public int weight() {
-            return weight;
-        }
-
-
+        public int weight() { return weight; }
     }
-
 }

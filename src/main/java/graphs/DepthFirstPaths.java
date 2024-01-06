@@ -1,7 +1,6 @@
 package graphs;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Consider this class, DepthFirstPaths, which computes the paths to any connected node
@@ -29,7 +28,8 @@ import java.util.List;
  * <p>
  * You are asked to implement all the TODOs of the DepthFirstPaths class.
  */
-public class DepthFirstPaths {
+public class DepthFirstPaths
+{
     private boolean[] marked; // marked[v] = is there an s-v path?
     private int[] edgeTo;     // edgeTo[v] = last edge on s-v path
     private final int s;
@@ -40,7 +40,8 @@ public class DepthFirstPaths {
      * @param G the graph
      * @param s the source vertex
      */
-    public DepthFirstPaths(Graph G, int s) {
+    public DepthFirstPaths(Graph G, int s)
+    {
         this.s = s;
         edgeTo = new int[G.V()];
         marked = new boolean[G.V()];
@@ -48,8 +49,27 @@ public class DepthFirstPaths {
     }
 
     // Depth first search from v
-    private void dfs(Graph G, int v) {
-        // TODO
+    private void dfs(Graph G, int v)
+    {
+        marked[s] = true;
+
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(s);
+
+        while (!queue.isEmpty())
+        {
+            int current = queue.remove();
+
+            for (Integer adjNode : G.adj(current))
+            {
+                if (!marked[adjNode])
+                {
+                    marked[adjNode] = true;
+                    edgeTo[adjNode] = current;
+                    queue.add(adjNode);
+                }
+            }
+        }
     }
 
     /**
@@ -58,10 +78,7 @@ public class DepthFirstPaths {
      * @param v the vertex
      * @return true if there is a path, false otherwise
      */
-    public boolean hasPathTo(int v) {
-        // TODO
-         return false;
-    }
+    public boolean hasPathTo(int v) { return marked[v]; }
 
     /**
      * Returns a path between the source vertex s and vertex v, or
@@ -71,56 +88,52 @@ public class DepthFirstPaths {
      * @return the sequence of vertices on a path between the source vertex
      * s and vertex v, as an Iterable
      */
-    public Iterable<Integer> pathTo(int v) {
-        // TODO
-         return null;
+    public Iterable<Integer> pathTo(int v)
+    {
+        Stack<Integer> stack = new Stack<>();
+        int current = v;
+        while (current != s)
+        {
+            stack.push(current);
+            current = edgeTo[current];
+        }
+        stack.push(s);
+        return stack;
     }
 
-    static class Graph {
-
+    static class Graph
+    {
         private List<Integer>[] edges;
 
         public Graph(int nbNodes)
         {
             this.edges = (ArrayList<Integer>[]) new ArrayList[nbNodes];
-            for (int i = 0;i < edges.length;i++)
-            {
-                edges[i] = new ArrayList<>();
-            }
+            for (int i = 0;i < edges.length;i++) edges[i] = new ArrayList<>();
         }
 
         /**
          * @return the number of vertices
          */
-        public int V() {
-            return edges.length;
-        }
+        public int V() { return edges.length; }
 
         /**
          * @return the number of edges
          */
-        public int E() {
+        public int E()
+        {
             int count = 0;
-            for (List<Integer> bag : edges) {
-                count += bag.size();
-            }
-
-            return count/2;
+            for (List<Integer> bag : edges) count += bag.size();
+            return count / 2;
         }
 
         /**
          * Add edge v-w to this graph
          */
-        public void addEdge(int v, int w) {
-            edges[v].add(w);
-            edges[w].add(v);
-        }
+        public void addEdge(int v, int w)  { edges[v].add(w); edges[w].add(v); }
 
         /**
          * @return the vertices adjacent to v
          */
-        public Iterable<Integer> adj(int v) {
-            return edges[v];
-        }
+        public Iterable<Integer> adj(int v) { return edges[v]; }
     }
 }

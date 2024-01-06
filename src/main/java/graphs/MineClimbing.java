@@ -1,7 +1,7 @@
 package graphs;
 
-//feel free to import anything here
-
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * You just bought yourself the latest game from the Majong™
@@ -29,9 +29,8 @@ package graphs;
  * and an end position, what is the minimum time needed
  * to reach the end position from the initial position?
  */
-public class MineClimbing {
-
-
+public class MineClimbing
+{
     /**
      * Returns the minimum distance between (startX, startY) and (endX, endY), knowing that
      * you can climb from one mine block (a,b) to the other (c,d) with a cost Math.abs(map[a][b] - map[c][d])
@@ -43,8 +42,52 @@ public class MineClimbing {
      * 0 <= startX, endX < n
      * 0 <= startY, endY < m
      */
-    public static int best_distance(int[][] map, int startX, int startY, int endX, int endY) {
-        // TODO
-         return 0;
+    // TODO
+    public static int best_distance(int[][] map, int startX, int startY, int endX, int endY)
+    {
+        if (startX == endX && startY == endY) return 0;
+
+        int[][] distTo = new int[map.length][map[0].length];
+
+        for (int i = 0; i < map.length; i++)
+        {
+            for (int j = 0; j < map[0].length; j++)
+            {
+                distTo[i][j] = Integer.MAX_VALUE;
+            }
+        }
+        distTo[startX][startY] = 0;
+
+        Queue<int[]> q = new LinkedList<>();
+        q.add(new int[] {startX, startY});
+
+        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+        while (!q.isEmpty())
+        {
+            int[] position = q.remove();
+            int pos_x = position[0];
+            int pos_y = position[1];
+
+            for (int[] direction : directions)
+            {
+                int newX = pos_x + direction[0];
+                int newY = pos_y + direction[1];
+
+                if (newX == map.length) newX = 0;
+                else if (newX == -1)    newX = map.length - 1;
+
+                if (newY == map[0].length) newY = 0;
+                else if (newY == -1)       newY = map[0].length - 1;
+
+                int extra_cost = Math.abs(map[pos_x][pos_y] - map[newX][newY]);
+                if (distTo[pos_x][pos_y] + extra_cost < distTo[newX][newY])
+                {
+                    distTo[newX][newY] = distTo[pos_x][pos_y] + extra_cost;
+                    q.add(new int[] {newX, newY});
+                }
+            }
+        }
+        return distTo[endX][endY];
     }
 }
