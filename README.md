@@ -23,8 +23,11 @@ I hope that this repository serves as a valuable resource for others navigating 
 
 ## Contents
 
-- **Exercises:** All solutions are organized in the `src/main/` directory.
-- **Tests:** Test cases for the solutions can be found in the `src/test/` directory.
+- **data/** contains data file for the parameterized tests
+- **libs/** contains some test libraries
+- **src/{main,test}/java** contains, respectively, the exercises and the associated tests
+
+The rest of the files are specific to the teachers and how student submissions are handled (using [INGInious](https://inginious.org/))
 
 ## Getting Started
 
