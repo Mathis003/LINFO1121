@@ -42,9 +42,9 @@ public class MineClimbing
      * 0 <= startX, endX < n
      * 0 <= startY, endY < m
      */
-    // TODO
     public static int best_distance(int[][] map, int startX, int startY, int endX, int endY)
     {
+        // BEGIN : STUDENT
         if (startX == endX && startY == endY) return 0;
 
         int[][] distTo = new int[map.length][map[0].length];
@@ -89,5 +89,6 @@ public class MineClimbing
             }
         }
         return distTo[endX][endY];
+        // END : STUDENT
     }
 }

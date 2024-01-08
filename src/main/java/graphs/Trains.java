@@ -72,6 +72,7 @@ public class Trains
      */
     public static Map<String, Integer> reachableEarliest(HashMap<StationTime, LinkedList<StationTime>> relations, StationTime startPoint)
     {
+        // BEGIN : STUDENT
         Map<String, Integer> result = new HashMap<>();
         result.put(startPoint.station, startPoint.time);
 
@@ -93,6 +94,7 @@ public class Trains
             }
         }
         return result;
+        // END : STUDENT
     }
 
     public static class StationTime implements Comparable<StationTime>

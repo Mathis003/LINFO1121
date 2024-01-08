@@ -51,6 +51,7 @@ public class DepthFirstPaths
     // Depth first search from v
     private void dfs(Graph G, int v)
     {
+        // BEGIN : STUDENT
         marked[s] = true;
 
         Queue<Integer> queue = new LinkedList<>();
@@ -70,6 +71,7 @@ public class DepthFirstPaths
                 }
             }
         }
+        // END : STUDENT
     }
 
     /**
@@ -78,7 +80,9 @@ public class DepthFirstPaths
      * @param v the vertex
      * @return true if there is a path, false otherwise
      */
+    // BEGIN : STUDENT
     public boolean hasPathTo(int v) { return marked[v]; }
+    // END : STUDENT
 
     /**
      * Returns a path between the source vertex s and vertex v, or
@@ -90,6 +94,7 @@ public class DepthFirstPaths
      */
     public Iterable<Integer> pathTo(int v)
     {
+        // BEGIN : STUDENT
         Stack<Integer> stack = new Stack<>();
         int current = v;
         while (current != s)
@@ -99,6 +104,7 @@ public class DepthFirstPaths
         }
         stack.push(s);
         return stack;
+        // END : STUDENT
     }
 
     static class Graph

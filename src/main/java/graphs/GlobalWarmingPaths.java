@@ -51,9 +51,10 @@ public class GlobalWarmingPaths
         this.altitude = altitude;
     }
 
-    public boolean isUnderWater(int x, int y)  { return (this.altitude[x][y] <= this.waterLevel); }
+    // BEGIN : STUDENT
+    private boolean isUnderWater(int x, int y)  { return (this.altitude[x][y] <= this.waterLevel); }
 
-    public List<Point> getListPath(Point start, Point end, Point[][] edgeTo)
+    private List<Point> getListPath(Point start, Point end, Point[][] edgeTo)
     {
         List<Point> listPoint = new LinkedList<>();
         Point currentP = end;
@@ -66,6 +67,7 @@ public class GlobalWarmingPaths
         Collections.reverse(listPoint);
         return listPoint;
     }
+    // END : STUDENT
 
 
     /**
@@ -80,6 +82,7 @@ public class GlobalWarmingPaths
     // expected time complexity O(n^2)
     public List<Point> shortestPath(Point p1, Point p2)
     {
+        // BEGIN : STUDENT
         if (p1 == null || p2 == null || isUnderWater(p1.getX(), p1.getY()) || isUnderWater(p2.getX(), p2.getY())) return new LinkedList<>();
 
         if (p1.equals(p2))
@@ -121,6 +124,7 @@ public class GlobalWarmingPaths
             }
         }
         return new LinkedList<>();
+        // END : STUDENT
     }
 
 

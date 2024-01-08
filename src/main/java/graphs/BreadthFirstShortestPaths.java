@@ -53,6 +53,7 @@ public class BreadthFirstShortestPaths
     // Breadth-first search from multiple sources
     private void bfs(Graph G, Iterable<Integer> sources)
     {
+        // BEGIN : STUDENT
         Queue<Integer> q = new LinkedList<>();
 
         for (int source : sources)
@@ -75,6 +76,7 @@ public class BreadthFirstShortestPaths
                 }
             }
         }
+        // END : STUDENT
     }
 
     /**
@@ -83,7 +85,9 @@ public class BreadthFirstShortestPaths
      * @param v the vertex
      * @return true if there is a path, and false otherwise
      */
+    // BEGIN : STUDENT
     public boolean hasPathTo(int v) { return marked[v]; }
+    // END : STUDENT
 
     /**
      * Returns the number of edges in a shortest path
@@ -92,7 +96,9 @@ public class BreadthFirstShortestPaths
      * @param v the vertex
      * @return the number of edges in a shortest path
      */
+    // BEGIN : STUDENT
     public int distTo(int v)  { return distTo[v]; }
+    // END : STUDENT
 
     static class Graph
     {

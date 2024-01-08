@@ -45,6 +45,7 @@ import java.util.Arrays;
  */
 public class GlobalWarming
 {
+    // BEGIN : STUDENT
     int[][] altitude;
     int waterLevel;
     int[][] id;
@@ -53,6 +54,7 @@ public class GlobalWarming
     int nbComponent;
 
     int SINK_POINT = -1;
+    // END : STUDENT
 
     /**
      * Constructor. The run time of this method is expected to be in
@@ -63,6 +65,7 @@ public class GlobalWarming
      */
     public GlobalWarming(int[][] altitude, int waterLevel)
     {
+        // BEGIN : STUDENT
         this.altitude = altitude;
         this.waterLevel = waterLevel;
 
@@ -84,11 +87,13 @@ public class GlobalWarming
                 }
             }
         }
+        // END : STUDENT
     }
 
-    public boolean isUnderWater(int x, int y)  { return (altitude[x][y] <= waterLevel); }
+    // BEGIN : STUDENT
+    private boolean isUnderWater(int x, int y)  { return (altitude[x][y] <= waterLevel); }
 
-    public void dfs(int x, int y)
+    private void dfs(int x, int y)
     {
         int[][] directions = new int[][] {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
 
@@ -104,13 +109,16 @@ public class GlobalWarming
             }
         }
     }
+    // END : STUDENT
 
     /**
      * Returns the number of island
      *
      * Expected time complexity O(1)
      */
+    // BEGIN : STUDENT
     public int nbIslands() { return nbComponent; }
+    // END : STUDENT
 
     /**
      * Return true if p1 is on the same island as p2, false otherwise
@@ -120,11 +128,13 @@ public class GlobalWarming
      * @param p1 the first point to compare
      * @param p2 the second point to compare
      */
+    // BEGIN : STUDENT
     public boolean onSameIsland(Point p1, Point p2)
     {
         if (isUnderWater(p1.getX(), p1.getY()) || isUnderWater(p2.getX(), p2.getY())) return false;
         return (id[p1.getX()][p1.getY()] == id[p2.getX()][p2.getY()]);
     }
+    // END : STUDENT
 
 
     /**

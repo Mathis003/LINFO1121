@@ -36,6 +36,7 @@ public class Wildfire
      */
     public int burnForest(int[][] forest)
     {
+        // BEGIN : STUDENT
         Queue<Ceil> q = new LinkedList<>();
 
         int nberTree = 0;
@@ -71,8 +72,10 @@ public class Wildfire
             }
         }
         return -1;
+        // END : STUDENT
     }
 
+    // BEGIN : STUDENT
     public class Ceil
     {
         int x;
@@ -86,4 +89,5 @@ public class Wildfire
             this.time = time;
         }
     }
+    // END : STUDENT
 }

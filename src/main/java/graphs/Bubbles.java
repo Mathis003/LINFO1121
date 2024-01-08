@@ -89,6 +89,7 @@ public class Bubbles
      */
     public static List<ForbiddenRelation> cleanBubbles(List<Contact> contacts, int n)
     {
+        // BEGIN : STUDENT
         HashMap<String, List<String>> listContacts = new HashMap<>();
         for (Contact contact : contacts)
         {
@@ -134,6 +135,7 @@ public class Bubbles
             }
         }
         return forbiddenRelations;
+        // END : STUDENT
     }
 }
 

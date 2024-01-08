@@ -57,6 +57,7 @@ public class TaskScheduler
      */
     public boolean isValid(List<String> schedule)
     {
+        // BEGIN : STUDENT
         HashSet<String> already_scheduled = new HashSet<>();
         for (String dependence : schedule)
         {
@@ -73,5 +74,6 @@ public class TaskScheduler
             already_scheduled.add(dependence);
         }
         return already_scheduled.size() == this.graph.size();
+        // END : STUDENT
     }
 }

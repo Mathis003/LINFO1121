@@ -26,9 +26,9 @@ public class ConnectedComponents
     /**
      * @return the number of connected components in g
      */
-    // TODO
     public static int numberOfConnectedComponents(Graph g)
     {
+        // BEGIN : STUDENT
         int nbComponents = 0;
         marked = new boolean[g.V()];
         for (int i = 0; i < g.V(); i++)
@@ -41,8 +41,10 @@ public class ConnectedComponents
             }
         }
         return nbComponents;
+        // END : STUDENT
     }
 
+    // BEGIN : STUDENT
     private static void dfs(Graph G, int v)
     {
         marked[v] = true;
@@ -51,6 +53,7 @@ public class ConnectedComponents
             if (!marked[w]) dfs(G, w);
         }
     }
+    // END : STUDENT
 
     static class Graph
     {

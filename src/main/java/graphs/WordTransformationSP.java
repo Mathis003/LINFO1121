@@ -47,6 +47,7 @@ public class WordTransformationSP
      */
     public static int minimalCost(String from, String to)
     {
+        // BEGIN : STUDENT
         HashMap<String, Integer> distTo = new HashMap<>();
         distTo.put(from, 0);
 
@@ -71,8 +72,10 @@ public class WordTransformationSP
             }
         }
         return distTo.get(to);
+        // END : STUDENT
     }
 
+    // BEGIN : STUDENT
     public static class Rotation implements Comparable<Rotation>
     {
         String str;
@@ -87,4 +90,5 @@ public class WordTransformationSP
         @Override
         public int compareTo(Rotation o)  { return this.cost - o.cost; }
     }
+    // END : STUDENT
 }

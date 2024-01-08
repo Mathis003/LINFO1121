@@ -30,6 +30,7 @@ public class Maze
 
     public static Iterable<Integer> shortestPath(int[][] maze, int x1, int y1, int x2, int y2)
     {
+        // BEGIN : STUDENT
         Stack<Integer> stack = new Stack<>();
 
         if (maze[x1][y1] == WALL || maze[x2][y2] == WALL) return stack;
@@ -85,10 +86,10 @@ public class Maze
         Stack<Integer> stack_final = new Stack<>();
         while (!stack.isEmpty()) stack_final.push(stack.pop());
         return stack_final;
+        // END : STUDENT
     }
 
-    public static int ind(int x, int y, int lg)
-    { return x * lg + y; }
+    public static int ind(int x, int y, int lg) { return x * lg + y; }
 
     public static int row(int pos, int mCols)  { return pos / mCols; }
 

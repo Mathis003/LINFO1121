@@ -52,6 +52,7 @@ public class GalaxyPath
     // Your algorithm should execute in O(n^2) where n is the number of galaxies (nodes)
     public static int findPath(int[][] graph, int source, Set<Integer> destinations)
     {
+        // BEGIN : STUDENT
         Queue<TimeSpendGalaxy> q = new LinkedList<>();
         q.add(new TimeSpendGalaxy(source, 0));
 
@@ -69,8 +70,10 @@ public class GalaxyPath
             }
         }
         return -1;
+        // END : STUDENT
     }
 
+    // BEGIN : STUDENT
     public static class TimeSpendGalaxy
     {
         int galaxyID;
@@ -82,4 +85,5 @@ public class GalaxyPath
             this.timeSpend = timeSpend;
         }
     }
+    // END : STUDENT
 }

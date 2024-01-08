@@ -49,6 +49,7 @@ public class SmallestPrice
      */
     public static int getSmallestPrice(WeightedGraph graph, int source, int maxTime, List<Pair> destinations)
     {
+        // BEGIN : STUDENT
         HashMap<Integer, Integer> destToPrice = new HashMap<>();
         for (Pair p : destinations) destToPrice.put(p.getNode(), p.getPrice());
 
@@ -58,7 +59,7 @@ public class SmallestPrice
 
         int minPrice = Integer.MAX_VALUE;
 
-        PriorityQueue<Node> PQ = new PriorityQueue<Node>();
+        PriorityQueue<Node> PQ = new PriorityQueue<>();
         PQ.offer(new Node(source, 0));
 
         while (!PQ.isEmpty() && destToPrice.size() > 0)
@@ -87,8 +88,10 @@ public class SmallestPrice
             }
         }
         return (minPrice == Integer.MAX_VALUE) ? -1 : minPrice;
+        // END : STUDENT
     }
 
+    // BEGIN : STUDENT
     static class Node implements Comparable<Node>
     {
         int node;
@@ -107,6 +110,7 @@ public class SmallestPrice
         @Override
         public int compareTo(Node o)  { return this.timePassed - o.timePassed; }
     }
+    // END : STUDENT
 
     static class Pair
     {
