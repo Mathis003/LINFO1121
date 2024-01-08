@@ -1,11 +1,12 @@
 # LINFO1121 - Algorithms and Data Structures Solutions
 
 ## Table of Contents
-1. [Overview](#Overview)
-2. [Course Information](#Course-Information)
-3. [Getting Started](#getting-started)
-4. [Exercises](#exercises)
-5. [Official Solutions Repository](#Official-Solutions-Repository)
+1. [Overview](#overview)
+2. [Course Information](#course-information)
+3. [Contents](#exercises)
+4. [Getting Started](#getting-started)
+5. [Disclaimer](#disclaimer)
+6. [Official Solutions Repository](#official-solutions-repository)
 
 ## Overview
 
@@ -43,7 +44,8 @@ If you have any suggestions or improvements, don't hesitate to open an issue or 
 
 ## Disclaimer
 
-These solutions are personal interpretations and may not represent the most efficient or optimal approaches. Use them as a reference, but always strive to understand and develop your solutions.
+These solutions are personal interpretations and may not represent the most efficient or optimal approaches.
+Use them as a reference, but always strive to understand and develop your solutions.
 
 ## Official Solutions Repository
 
